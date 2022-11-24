@@ -1,33 +1,152 @@
 {
   "project_info": {
-    "project_number": "221451768064",
-    "project_id": "map-for-photographers",
-    "storage_bucket": "map-for-photographers.appspot.com"
+    "project_number": "479361866110",
+    "project_id": "mcso-ap-civita",
+    "storage_bucket": "mcso-ap-civita.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:221451768064:android:f53d93235c9a16d46f63e5",
+        "mobilesdk_app_id": "1:479361866110:android:5683db5cb401da1a47bb2f",
         "android_client_info": {
           "package_name": "com.cs386p.mapforphotographers"
         }
       },
       "oauth_client": [
         {
-          "client_id": "221451768064-7mil30ron192c9ohv94992c89e665lph.apps.googleusercontent.com",
+          "client_id": "479361866110-dgfenvudoudo6qqqsm14u8emdd8i2glc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cs386p.mapforphotographers",
+            "certificate_hash": "3a8c5f2124c041ec35b5ce979c953d48f9391dec"
+          }
+        },
+        {
+          "client_id": "479361866110-8tucil84t00fc8at5u4c5u8sgs5d1t5h.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAcmdLByGt9FGMrY30jR4uh82YuV-4IlcM"
+          "current_key": "AIzaSyC7LoEEN_WCftZfZxktn-owUMVlZoLHyvw"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "221451768064-7mil30ron192c9ohv94992c89e665lph.apps.googleusercontent.com",
+              "client_id": "479361866110-8tucil84t00fc8at5u4c5u8sgs5d1t5h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:479361866110:android:2528a52b1b678a5d47bb2f",
+        "android_client_info": {
+          "package_name": "edu.utap.firebaseauth"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "479361866110-6n1i8p8jjne37lqp2r45mh6lh5dc96co.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "edu.utap.firebaseauth",
+            "certificate_hash": "3a8c5f2124c041ec35b5ce979c953d48f9391dec"
+          }
+        },
+        {
+          "client_id": "479361866110-8tucil84t00fc8at5u4c5u8sgs5d1t5h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7LoEEN_WCftZfZxktn-owUMVlZoLHyvw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "479361866110-8tucil84t00fc8at5u4c5u8sgs5d1t5h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:479361866110:android:785417aa4a55c54347bb2f",
+        "android_client_info": {
+          "package_name": "edu.utap.firenote"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "479361866110-frkomq7gjim21fkj1i549b0ll9o3jktg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "edu.utap.firenote",
+            "certificate_hash": "3a8c5f2124c041ec35b5ce979c953d48f9391dec"
+          }
+        },
+        {
+          "client_id": "479361866110-8tucil84t00fc8at5u4c5u8sgs5d1t5h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7LoEEN_WCftZfZxktn-owUMVlZoLHyvw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "479361866110-8tucil84t00fc8at5u4c5u8sgs5d1t5h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:479361866110:android:2b8252e38b4f4a6f47bb2f",
+        "android_client_info": {
+          "package_name": "edu.utap.photolist"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "479361866110-925mcodo2vommsl0dl3t56qhop16qel0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "edu.utap.photolist",
+            "certificate_hash": "3a8c5f2124c041ec35b5ce979c953d48f9391dec"
+          }
+        },
+        {
+          "client_id": "479361866110-8tucil84t00fc8at5u4c5u8sgs5d1t5h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7LoEEN_WCftZfZxktn-owUMVlZoLHyvw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "479361866110-8tucil84t00fc8at5u4c5u8sgs5d1t5h.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

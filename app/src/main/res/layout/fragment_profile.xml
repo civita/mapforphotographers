@@ -6,17 +6,67 @@
     android:layout_height="match_parent"
     tools:context=".ui.profile.ProfileFragment">
 
-    <TextView
-        android:id="@+id/text_profile"
-        android:layout_width="match_parent"
+    <FrameLayout
+        android:id="@+id/text_view"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/text_profile"
+        app:layout_constraintEnd_toStartOf="@id/button_login"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        >
+
+        <TextView
+            android:visibility="visible"
+            android:id="@+id/text_welcome"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Hi, please login first."
+            android:textSize="24sp"
+
+            />
+
+        <EditText
+            android:visibility="gone"
+            android:id="@+id/text_edit_username"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="xxx"
+            android:textSize="24sp"
+            />
+    </FrameLayout>
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/button_login"
+        android:text="login"
+        app:layout_constraintLeft_toRightOf="@id/text_view"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/text_profile"
+        />
+
+    <!--androidx.fragment.app.FragmentContainerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/main_frame"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/button_login"
+        app:layout_constraintBottom_toBottomOf="parent"
+        /-->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:text="Your photos will be shown here..."
+        android:textSize="20dp"
+        android:id="@+id/text_profile"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/button_login"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
