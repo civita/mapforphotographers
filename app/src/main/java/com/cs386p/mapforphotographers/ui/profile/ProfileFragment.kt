@@ -1,23 +1,25 @@
 package com.cs386p.mapforphotographers.ui.profile
 
-import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import com.cs386p.mapforphotographers.AuthInit
 import com.cs386p.mapforphotographers.databinding.FragmentProfileBinding
-import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
+
 
 class ProfileFragment : Fragment() {
 
@@ -41,6 +43,17 @@ class ProfileFragment : Fragment() {
         }
     }
 
+    // An Android nightmare
+    // https://stackoverflow.com/questions/1109022/close-hide-the-android-soft-keyboard
+    // https://stackoverflow.com/questions/7789514/how-to-get-activitys-windowtoken-without-view
+    open fun hideKeyboard() {
+        if (activity != null){
+            // Hide soft keyboard
+            val imm =
+                requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(requireView().windowToken, 0)
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -64,6 +77,8 @@ class ProfileFragment : Fragment() {
                 AuthInit(viewModel, signInLauncher)
             } else {
                 viewModel.signOut()
+                binding.textWelcome.visibility = View.VISIBLE
+                binding.textEditUsername.visibility = View.GONE
             }
         }
 
@@ -77,18 +92,25 @@ class ProfileFragment : Fragment() {
         }
 
         binding.textWelcome.setOnClickListener {
-            binding.textWelcome.visibility = View.GONE
-            binding.textEditUsername.visibility = View.VISIBLE
+            val user = FirebaseAuth.getInstance().currentUser
+            if(user != null) {
+                binding.textWelcome.visibility = View.GONE
+                binding.textEditUsername.visibility = View.VISIBLE
+            }
         }
 
         binding.textEditUsername.setOnClickListener {
-            if (!binding.textEditUsername.text.isNullOrBlank()) {
-                AuthInit.setDisplayName(binding.textEditUsername.text.toString(), viewModel)
-                binding.textWelcome.visibility = View.VISIBLE
-                binding.textEditUsername.visibility = View.GONE
-            } else {
-                val toast = Toast.makeText(context, "Please provide a display name!", Toast.LENGTH_SHORT)
-                toast.show()
+            val user = FirebaseAuth.getInstance().currentUser
+            if(user != null) {
+                if (!binding.textEditUsername.text.isNullOrBlank()) {
+                    AuthInit.setDisplayName(binding.textEditUsername.text.toString(), viewModel)
+                    binding.textWelcome.visibility = View.VISIBLE
+                    binding.textEditUsername.visibility = View.GONE
+                    hideKeyboard()
+                } else {
+                    val toast = Toast.makeText(context, "Please provide a display name!", Toast.LENGTH_SHORT)
+                    toast.show()
+                }
             }
         }
 
