@@ -16,6 +16,7 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
         <activity
+            android:windowSoftInputMode="adjustResize"
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name">
@@ -28,6 +29,12 @@
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
+        </activity>
+
+        <activity
+            android:name=".OnePhoto"
+            android:label="OnePhoto"
+            android:parentActivityName=".MainActivity">
         </activity>
     </application>
 
