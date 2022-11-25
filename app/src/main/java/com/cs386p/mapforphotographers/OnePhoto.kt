@@ -3,11 +3,16 @@ package com.cs386p.mapforphotographers
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toFile
 import androidx.exifinterface.media.ExifInterface
 import com.cs386p.mapforphotographers.databinding.ActivityOnePhotoBinding
+import com.google.android.material.snackbar.Snackbar
+import java.io.File
 import java.io.IOException
 import java.io.InputStream
+import java.net.URI
 
 
 class OnePhoto: AppCompatActivity() {
@@ -18,12 +23,14 @@ class OnePhoto: AppCompatActivity() {
         const val thumbnailURLKey = "thumbnailURL"
         const val uriKey = "uri"
     }
+    private val viewModel: PhotoViewModel by viewModels()
 
     private var title : String = """"""
     private var selfText : String = """"""
     private var imageURL : String = """"""
     private var thumbnailURL : String = """"""
     private var uri : String = """"""
+    private val storage = Storage()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +46,20 @@ class OnePhoto: AppCompatActivity() {
         Log.d("xxx_onephoto", uri)
 
         if (!uri.isNullOrEmpty()) {
+
+            activityOnePhotoBinding.onePhotoButtonSubmit.setOnClickListener {
+                if(!activityOnePhotoBinding.onePhotoTitle.text.isNullOrBlank()) {
+                    //viewModel.pictureSuccess()
+//                    val localPhotoFile = File(Uri.parse(uri).toString())
+                    storage.uploadImage(Uri.parse(uri), activityOnePhotoBinding.onePhotoTitle.text.toString()) {
+
+                }
+                } else {
+                    val snack = Snackbar.make(it,"Please provide a title!", Snackbar.LENGTH_LONG)
+                    snack.show()
+                }
+            }
+
             activityOnePhotoBinding.onePhotoImage.setImageURI(Uri.parse(uri))
 
             val sIn: InputStream?

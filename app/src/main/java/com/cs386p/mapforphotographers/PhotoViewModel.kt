@@ -142,11 +142,11 @@ class PhotoViewModel() : ViewModel() {
         val photoFile = ProfileFragment.localPhotoFile(pictureUUID)
         // XXX Write me while preserving referential integrity
         // After calling photoSuccess, reset its value to ::defaultPhoto
-        storage.uploadImage(photoFile, pictureUUID) {
-            photoSuccess(photoFile.length())
-            photoSuccess = ::defaultPhoto
-            pictureUUID = ""
-        }
+//        storage.uploadImage(photoFile, pictureUUID) {
+//            photoSuccess(photoFile.length())
+//            photoSuccess = ::defaultPhoto
+//            pictureUUID = ""
+//        }
     }
     fun pictureFailure() {
         // Note, the camera intent will only create the file if the user hits accept

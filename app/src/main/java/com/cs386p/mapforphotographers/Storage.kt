@@ -14,34 +14,36 @@ class Storage {
         FirebaseStorage.getInstance().reference.child("images")
 
     // https://firebase.google.com/docs/storage/android/upload-files#upload_from_a_local_file
-    fun uploadImage(localFile: File, uuid: String, uploadSuccess:(Long)->Unit) {
+    fun uploadImage(uri: Uri, uuid: String, uploadSuccess:(Long)->Unit) {
         // XXX Write me
-        val file = Uri.fromFile(localFile)
+        //val file = Uri.fromFile(localFile)
         val uuidRef = photoStorage.child(uuid)
         val metadata = StorageMetadata.Builder()
             .setContentType("image/jpg")
             .build()
-        val uploadTask = uuidRef.putFile(file, metadata)
+        val uploadTask = uuidRef.putFile(uri, metadata)
 
         // Register observers to listen for when the download is done or if it fails
         uploadTask
             .addOnFailureListener {
                 // Handle unsuccessful uploads
-                if(localFile.delete()) {
-                    Log.d(javaClass.simpleName, "Upload FAILED $uuid, file deleted")
-                } else {
-                    Log.d(javaClass.simpleName, "Upload FAILED $uuid, file delete FAILED")
-                }
+                Log.d(javaClass.simpleName, "Upload FAILED $uuid")
+//                if(localFile.delete()) {
+//                    Log.d(javaClass.simpleName, "Upload FAILED $uuid, file deleted")
+//                } else {
+//                    Log.d(javaClass.simpleName, "Upload FAILED $uuid, file delete FAILED")
+//                }
             }
             .addOnSuccessListener {
                 // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
                 val sizeBytes = it.metadata?.sizeBytes ?: -1
                 uploadSuccess(sizeBytes)
-                if(localFile.delete()) {
-                    Log.d(javaClass.simpleName, "Upload succeeded $uuid, file deleted")
-                } else {
-                    Log.d(javaClass.simpleName, "Upload succeeded $uuid, file delete FAILED")
-                }
+                Log.d(javaClass.simpleName, "Upload succeeded $uuid")
+//                if(localFile.delete()) {
+//                    Log.d(javaClass.simpleName, "Upload succeeded $uuid, file deleted")
+//                } else {
+//                    Log.d(javaClass.simpleName, "Upload succeeded $uuid, file delete FAILED")
+//                }
             }
     }
     // https://firebase.google.com/docs/storage/android/delete-files#delete_a_file
