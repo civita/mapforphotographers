@@ -10,7 +10,7 @@
         android:id="@+id/text_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/text_profile"
+        app:layout_constraintBottom_toTopOf="@id/frame_stat"
         app:layout_constraintEnd_toStartOf="@id/button_login"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -23,7 +23,6 @@
             android:layout_height="match_parent"
             android:text="Hi, please login first."
             android:textSize="24sp"
-
             />
 
         <EditText
@@ -36,7 +35,6 @@
             />
     </FrameLayout>
 
-
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -45,18 +43,87 @@
         app:layout_constraintLeft_toRightOf="@id/text_view"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/text_profile"
+        app:layout_constraintBottom_toTopOf="@id/frame_stat"
         />
 
-    <!--androidx.fragment.app.FragmentContainerView
+
+
+    <LinearLayout
+        android:id="@+id/frame_stat"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/main_frame"
+        android:layout_height="wrap_content"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/button_login"
-        app:layout_constraintBottom_toBottomOf="parent"
-        /-->
+        app:layout_constraintBottom_toTopOf="@id/text_profile"
+        android:orientation="horizontal"
+        android:gravity="bottom"
+        >
+
+       <LinearLayout
+           android:padding="20dp"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:orientation="vertical"
+           android:gravity="center"
+           android:layout_weight="1">
+           <TextView
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:textSize="50dp"
+               android:text="0"/>
+           <TextView
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:textSize="20dp"
+               android:text="Photos"/>
+       </LinearLayout>
+
+    <LinearLayout
+        android:padding="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_weight="1">
+        <de.hdodenhof.circleimageview.CircleImageView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/profile_image"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:src="@drawable/ic_baseline_account_circle_24"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            android:text="\@username"/>
+    </LinearLayout>
+
+
+        <LinearLayout
+            android:padding="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_weight="1">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="50dp"
+                android:text="0"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20dp"
+                android:text="Liked"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -65,8 +132,9 @@
         android:id="@+id/text_profile"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/button_login"
+        app:layout_constraintTop_toBottomOf="@id/frame_stat"
         app:layout_constraintBottom_toBottomOf="parent"
         />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -44,6 +44,7 @@ class ProfileFragment : Fragment() {
     }
 
     // An Android nightmare
+    // https://stackoverflow.com/a/70562398
     // https://stackoverflow.com/questions/1109022/close-hide-the-android-soft-keyboard
     // https://stackoverflow.com/questions/7789514/how-to-get-activitys-windowtoken-without-view
     open fun hideKeyboard() {
