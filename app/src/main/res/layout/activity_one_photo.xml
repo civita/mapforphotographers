@@ -14,7 +14,7 @@
 
         <ImageView
             android:id="@+id/one_photo_image"
-            android:layout_width="192dp"
+            android:layout_width="128dp"
             android:layout_height="192dp"/>
 
         <TableLayout
@@ -70,7 +70,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent">
                 <TextView
-                    android:text="Shutter speed"
+                    android:text="Shutter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_column="1" />

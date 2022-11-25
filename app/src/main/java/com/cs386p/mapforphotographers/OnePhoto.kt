@@ -2,14 +2,12 @@ package com.cs386p.mapforphotographers
 
 import android.net.Uri
 import android.os.Bundle
-import android.text.method.ScrollingMovementMethod
 import android.util.Log
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.MenuProvider
+import androidx.exifinterface.media.ExifInterface
 import com.cs386p.mapforphotographers.databinding.ActivityOnePhotoBinding
+import java.io.IOException
+import java.io.InputStream
 
 
 class OnePhoto: AppCompatActivity() {
@@ -42,6 +40,35 @@ class OnePhoto: AppCompatActivity() {
 
         if (!uri.isNullOrEmpty()) {
             activityOnePhotoBinding.onePhotoImage.setImageURI(Uri.parse(uri))
+
+            val sIn: InputStream?
+            try {
+                sIn = contentResolver.openInputStream(Uri.parse(uri))
+                val exifInterface = sIn?.let { ExifInterface(it) }
+                if (exifInterface != null) {
+                    Log.d("xxx_onephoto", exifInterface.toString())
+                    activityOnePhotoBinding.onePhotoTime.text = exifInterface.getAttribute(ExifInterface.TAG_DATETIME).toString()
+                    activityOnePhotoBinding.onePhotoCamera.text = exifInterface.getAttribute(ExifInterface.TAG_MODEL).toString()
+                    activityOnePhotoBinding.onePhotoLens.text = exifInterface.getAttribute(ExifInterface.TAG_LENS_MAKE).toString()
+                    activityOnePhotoBinding.onePhotoShutterSpeed.text = exifInterface.getAttributeDouble(ExifInterface.TAG_SHUTTER_SPEED_VALUE, 0.00).toString()
+                    activityOnePhotoBinding.onePhotoFocalLength.text = exifInterface.getAttribute(ExifInterface.TAG_FOCAL_LENGTH).toString()
+                    activityOnePhotoBinding.onePhotoAperture.text = exifInterface.getAttribute(ExifInterface.TAG_APERTURE_VALUE).toString()
+                    activityOnePhotoBinding.onePhotoIso.text = exifInterface.getAttribute(ExifInterface.TAG_ISO_SPEED).toString()
+                    activityOnePhotoBinding.onePhotoLat.text = exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE).toString()
+                    activityOnePhotoBinding.onePhotoLng.text = exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE).toString()
+
+
+                }
+                // Extract the EXIF tag here
+
+                try {
+                    sIn?.close()
+                } catch (ignored: IOException) {
+                }
+
+            } catch (e: IOException) {
+                // Handle any errors
+            }
         }
 //        title = intent.getStringExtra(titleKey).toString()
 //        selfText = intent.getStringExtra(selfTextKey).toString()
