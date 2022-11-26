@@ -8,11 +8,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toFile
 import androidx.exifinterface.media.ExifInterface
 import com.cs386p.mapforphotographers.databinding.ActivityOnePhotoBinding
+import com.cs386p.mapforphotographers.model.PhotoMeta
 import com.google.android.material.snackbar.Snackbar
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
 import java.net.URI
+import java.util.*
 
 
 class OnePhoto: AppCompatActivity() {
@@ -31,6 +33,8 @@ class OnePhoto: AppCompatActivity() {
     private var thumbnailURL : String = """"""
     private var uri : String = """"""
     private val storage = Storage()
+    private var exif = arrayOf(String())
+    private var photometa = PhotoMeta()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +42,6 @@ class OnePhoto: AppCompatActivity() {
         setContentView(activityOnePhotoBinding.root)
         //setSupportActionBar(activityOnePostBinding.toolbar)
         //supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
         supportActionBar?.setHomeButtonEnabled(false)
 
@@ -51,9 +54,15 @@ class OnePhoto: AppCompatActivity() {
                 if(!activityOnePhotoBinding.onePhotoTitle.text.isNullOrBlank()) {
                     //viewModel.pictureSuccess()
 //                    val localPhotoFile = File(Uri.parse(uri).toString())
-                    storage.uploadImage(Uri.parse(uri), activityOnePhotoBinding.onePhotoTitle.text.toString()) {
 
-                }
+                    val uuid = UUID.randomUUID().toString()
+                    storage.uploadImage(Uri.parse(uri), uuid) {
+//                        viewModel.createPhotoMeta(activityOnePhotoBinding.onePhotoTitle.text.toString(),
+//                            activityOnePhotoBinding.onePhotoDescription.text?.toString(),
+//                            exif,
+//                            uuid
+//                            ))
+                    }
                 } else {
                     val snack = Snackbar.make(it,"Please provide a title!", Snackbar.LENGTH_LONG)
                     snack.show()
@@ -67,16 +76,36 @@ class OnePhoto: AppCompatActivity() {
                 sIn = contentResolver.openInputStream(Uri.parse(uri))
                 val exifInterface = sIn?.let { ExifInterface(it) }
                 if (exifInterface != null) {
+
+
+
                     Log.d("xxx_onephoto", exifInterface.toString())
-                    activityOnePhotoBinding.onePhotoTime.text = exifInterface.getAttribute(ExifInterface.TAG_DATETIME).toString()
-                    activityOnePhotoBinding.onePhotoCamera.text = exifInterface.getAttribute(ExifInterface.TAG_MODEL).toString()
-                    activityOnePhotoBinding.onePhotoLens.text = exifInterface.getAttribute(ExifInterface.TAG_LENS_MAKE).toString()
-                    activityOnePhotoBinding.onePhotoShutterSpeed.text = exifInterface.getAttributeDouble(ExifInterface.TAG_SHUTTER_SPEED_VALUE, 0.00).toString()
-                    activityOnePhotoBinding.onePhotoFocalLength.text = exifInterface.getAttribute(ExifInterface.TAG_FOCAL_LENGTH).toString()
-                    activityOnePhotoBinding.onePhotoAperture.text = exifInterface.getAttribute(ExifInterface.TAG_APERTURE_VALUE).toString()
-                    activityOnePhotoBinding.onePhotoIso.text = exifInterface.getAttribute(ExifInterface.TAG_ISO_SPEED).toString()
-                    activityOnePhotoBinding.onePhotoLat.text = exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE).toString()
-                    activityOnePhotoBinding.onePhotoLng.text = exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE).toString()
+                    photometa.pictureDate = exifInterface.getAttribute(ExifInterface.TAG_DATETIME).toString()
+                    activityOnePhotoBinding.onePhotoTime.text = photometa.pictureDate
+
+                    photometa.pictureCamera = exifInterface.getAttribute(ExifInterface.TAG_MODEL).toString()
+                    activityOnePhotoBinding.onePhotoCamera.text = photometa.pictureCamera
+
+                    photometa.pictureLens = exifInterface.getAttribute(ExifInterface.TAG_LENS_MAKE).toString()
+                    activityOnePhotoBinding.onePhotoLens.text = photometa.pictureLens
+
+                    photometa.pictureShutterSpeed = exifInterface.getAttributeDouble(ExifInterface.TAG_SHUTTER_SPEED_VALUE, 0.00).toString()
+                    activityOnePhotoBinding.onePhotoShutterSpeed.text = photometa.pictureShutterSpeed
+
+                    photometa.pictureFocalLength = exifInterface.getAttributeDouble(ExifInterface.TAG_FOCAL_LENGTH, 0.00).toString()
+                    activityOnePhotoBinding.onePhotoFocalLength.text = photometa.pictureFocalLength
+
+                    photometa.pictureAperture = exifInterface.getAttributeDouble(ExifInterface.TAG_APERTURE_VALUE, 0.00).toString()
+                    activityOnePhotoBinding.onePhotoAperture.text = photometa.pictureAperture
+
+                    photometa.pictureIso = exifInterface.getAttribute(ExifInterface.TAG_ISO_SPEED).toString() // todo: null?
+                    activityOnePhotoBinding.onePhotoIso.text = photometa.pictureIso
+
+                    photometa.pictureLat = exifInterface.getAttributeDouble(ExifInterface.TAG_GPS_LATITUDE, 0.00).toString()
+                    activityOnePhotoBinding.onePhotoLat.text = photometa.pictureLat // todo :covert
+
+                    photometa.pictureLng = exifInterface.getAttributeDouble(ExifInterface.TAG_GPS_LONGITUDE, 0.00).toString()
+                    activityOnePhotoBinding.onePhotoLng.text = photometa.pictureLng
 
 
                 }
