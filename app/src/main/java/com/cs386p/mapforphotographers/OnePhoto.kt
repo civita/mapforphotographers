@@ -56,12 +56,10 @@ class OnePhoto: AppCompatActivity() {
 //                    val localPhotoFile = File(Uri.parse(uri).toString())
 
                     val uuid = UUID.randomUUID().toString()
+                    photometa.pictureTitle = activityOnePhotoBinding.onePhotoTitle.text.toString()
+                    photometa.pictureDescription = activityOnePhotoBinding.onePhotoDescription.text.toString()
                     storage.uploadImage(Uri.parse(uri), uuid) {
-//                        viewModel.createPhotoMeta(activityOnePhotoBinding.onePhotoTitle.text.toString(),
-//                            activityOnePhotoBinding.onePhotoDescription.text?.toString(),
-//                            exif,
-//                            uuid
-//                            ))
+                        viewModel.createPhotoMeta(photometa, uuid)
                     }
                 } else {
                     val snack = Snackbar.make(it,"Please provide a title!", Snackbar.LENGTH_LONG)
@@ -76,8 +74,6 @@ class OnePhoto: AppCompatActivity() {
                 sIn = contentResolver.openInputStream(Uri.parse(uri))
                 val exifInterface = sIn?.let { ExifInterface(it) }
                 if (exifInterface != null) {
-
-
 
                     Log.d("xxx_onephoto", exifInterface.toString())
                     photometa.pictureDate = exifInterface.getAttribute(ExifInterface.TAG_DATETIME).toString()

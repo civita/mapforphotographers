@@ -3,6 +3,7 @@ package com.cs386p.mapforphotographers
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.provider.ContactsContract.Contacts.Photo
 import android.util.Log
 import android.widget.ImageView
 import androidx.lifecycle.LiveData
@@ -104,6 +105,16 @@ class PhotoViewModel() : ViewModel() {
         )
         dbHelp.createPhotoMeta(sortInfo.value!!, photoMeta, photoMetaList)
     }
+
+    fun createPhotoMeta(photoMeta: PhotoMeta, uuid : String) {
+        val currentUser = firebaseAuthLiveData.getCurrentUser()!!
+        photoMeta.ownerName = currentUser.displayName ?: "Anonymous user"
+        photoMeta.ownerUid = currentUser.uid
+        photoMeta.uuid = uuid
+        dbHelp.createPhotoMeta(sortInfo.value!!, photoMeta, photoMetaList)
+    }
+
+
 
     /////////////////////////////////////////////////////////////
     // This is intended to be set once by MainActivity.
