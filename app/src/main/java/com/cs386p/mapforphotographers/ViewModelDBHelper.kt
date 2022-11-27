@@ -55,6 +55,20 @@ class ViewModelDBHelper() {
         }
     }
 
+    fun dbFetchPhotoCount(uid: String, photoCount: MutableLiveData<Int>) {
+        db.collection(rootCollection)
+            .whereEqualTo("ownerUid", uid)
+            .get()
+            .addOnSuccessListener { result ->
+                photoCount.postValue(result!!.documents.size)
+            }
+            .addOnFailureListener {
+                photoCount.postValue(0)
+            }
+    }
+
+
+
     // https://firebase.google.com/docs/firestore/manage-data/add-data#add_a_document
     fun createPhotoMeta(
         sortInfo: SortInfo,

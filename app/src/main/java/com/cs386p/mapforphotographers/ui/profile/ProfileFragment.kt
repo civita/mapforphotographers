@@ -77,6 +77,13 @@ class ProfileFragment : Fragment() {
         }
     }
 
+    private fun updatePhotoCount() {
+        val user = FirebaseAuth.getInstance().currentUser
+        if(user != null) {
+            viewModelPhoto.fetchPhotoCount(user.uid)
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -102,6 +109,7 @@ class ProfileFragment : Fragment() {
 //        initTouchHelper().attachToRecyclerView(rv)
         viewModelPhoto.observePhotoMeta().observe(viewLifecycleOwner) {
             adapter.submitList(it)
+            updatePhotoCount()
         }
 
 
@@ -123,6 +131,10 @@ class ProfileFragment : Fragment() {
         viewModel.observeDisplayName().observe(viewLifecycleOwner) {
             binding.textWelcome.text = "Hi, " + it
             binding.textEditUsername.setText(it)
+        }
+
+        viewModelPhoto.observerPhotoCount().observe(viewLifecycleOwner) {
+            binding.textPhotosCount.text = it.toString()
         }
 
         binding.textWelcome.setOnClickListener {
@@ -162,6 +174,7 @@ class ProfileFragment : Fragment() {
 
         viewModel.updateUser()
         viewModelPhoto.fetchPhotoMeta()
+//        updatePhotoCount()
         return root
     }
     private val importPhotoLauncher = registerForActivityResult(

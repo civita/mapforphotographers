@@ -34,6 +34,8 @@ class PhotoViewModel() : ViewModel() {
     // assert does not work
     private lateinit var crashMe: String
 
+    private var photoCount = MutableLiveData<Int>()
+
     // NB: Here is a problem with this whole strategy.  It "works" when you use
     // local variables to save these "function pointers."  But the viewModel can be
     // cleared, so we want to save these function pointers that are actually closures
@@ -62,6 +64,14 @@ class PhotoViewModel() : ViewModel() {
     }
     fun observeSortInfo(): LiveData<SortInfo> {
         return sortInfo
+    }
+
+    fun observerPhotoCount(): LiveData<Int> {
+        return photoCount
+    }
+
+    fun fetchPhotoCount(uid: String) {
+        dbHelp.dbFetchPhotoCount(uid, photoCount)
     }
 
     fun sortInfoClick(sortColumn: SortColumn) {
