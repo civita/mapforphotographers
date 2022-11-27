@@ -6,9 +6,12 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.cs386p.mapforphotographers.PhotoViewModel
+import com.cs386p.mapforphotographers.PhotoViewModel.Companion.doOnePhotoViewing
 import com.cs386p.mapforphotographers.databinding.RowBinding
 import com.cs386p.mapforphotographers.model.PhotoMeta
 import com.cs386p.mapforphotographers.ui.profile.ProfileViewModel
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 
 class PhotoMetaAdapter(private val viewModel: PhotoViewModel)
@@ -39,6 +42,9 @@ class PhotoMetaAdapter(private val viewModel: PhotoViewModel)
 //            holder.rowBinding.rowPictureTitle.text = photoMeta.pictureTitle
 //            holder.rowBinding.rowSize.text = photoMeta.byteSize.toString()
             // Note to future me: It might be fun to display the date
+            rowBinding.root.setOnClickListener {
+                doOnePhotoViewing(rowBinding.root.context, photoMeta)
+            }
         }
     }
 

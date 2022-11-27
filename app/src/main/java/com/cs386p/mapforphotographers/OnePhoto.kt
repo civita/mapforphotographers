@@ -103,7 +103,7 @@ class OnePhoto: AppCompatActivity(), OnMapReadyCallback {
                         finish()
                     }
                 } else {
-                    val snack = Snackbar.make(it,"Please provide a title!", Snackbar.LENGTH_LONG)
+                    val snack = Snackbar.make(it,"Photo needs a title!", Snackbar.LENGTH_LONG)
                     snack.show()
                 }
             }
@@ -255,15 +255,16 @@ class OnePhoto: AppCompatActivity(), OnMapReadyCallback {
 
         // Start the map at the Harry Ransom center
         //map.moveCamera(CameraUpdateFactory.newLatLngZoom(nearHarryRansomCenter, 15.0f))
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(photometa.pictureLat.toDouble(), photometa.pictureLng.toDouble()), 15.0f))
-        val titleString = "%.3f".format(photometa.pictureLat.toDouble()) + " " + "%.3f".format(photometa.pictureLng.toDouble())
-        map.addMarker(
-            MarkerOptions()
-                .position(LatLng(photometa.pictureLat.toDouble(), photometa.pictureLng.toDouble()))
-                .title(titleString)
-        )
-
-
+        Log.d("xxx_one_photo", photometa.pictureLat)
+        if (photometa.pictureLat != "null" && photometa.pictureLng != "null") { // some dirty work to avoid null geotag
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(photometa.pictureLat.toDouble(), photometa.pictureLng.toDouble()), 15.0f))
+            val titleString = "%.3f".format(photometa.pictureLat.toDouble()) + " " + "%.3f".format(photometa.pictureLng.toDouble())
+            map.addMarker(
+                MarkerOptions()
+                    .position(LatLng(photometa.pictureLat.toDouble(), photometa.pictureLng.toDouble()))
+                    .title(titleString)
+            )
+        }
     }
 
     private fun checkGooglePlayServices() {

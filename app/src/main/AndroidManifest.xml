@@ -38,6 +38,12 @@
             android:label="OnePhoto"
             android:parentActivityName=".MainActivity">
         </activity>
+
+        <activity
+            android:name=".OnePhotoViewing"
+            android:label="OnePhotoViewing"
+            android:parentActivityName=".MainActivity">
+        </activity>
     </application>
 
 </manifest>

@@ -196,5 +196,10 @@ class PhotoViewModel() : ViewModel() {
 //            onePostIntent.putExtra("""thumbnailURL""", redditPost.thumbnailURL)
             context.startActivity(onePhotoIntent)
         }
+        fun doOnePhotoViewing(context: Context, photometa: PhotoMeta) {
+            val onePhotoIntent = Intent(context, OnePhotoViewing::class.java)
+            onePhotoIntent.putExtra("""photoMeta""", photometa)
+            context.startActivity(onePhotoIntent)
+        }
     }
 }
