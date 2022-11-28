@@ -3,6 +3,7 @@ package com.cs386p.mapforphotographers
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.cs386p.mapforphotographers.model.PhotoMeta
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 
@@ -67,7 +68,43 @@ class ViewModelDBHelper() {
             }
     }
 
+    fun dbFetchPhotoLikedCount(uid: String, photoLikedCount: MutableLiveData<Int>) {
+        db.collection(rootCollection)
+            .whereArrayContains("likedBy", uid)
+            .get()
+            .addOnSuccessListener { result ->
+                photoLikedCount.postValue(result!!.documents.size)
+            }
+            .addOnFailureListener {
+                photoLikedCount.postValue(0)
+            }
+    }
 
+    fun dbLikeOnePhoto(uuid: String, uid: String) {
+        db.collection(rootCollection)
+            .limit(1)
+            .whereEqualTo("uuid", uuid)
+            .get()
+            .addOnSuccessListener { result ->
+                var docRef = db.collection(rootCollection).document(result.first().id)
+                docRef.update("likedBy", FieldValue.arrayUnion(uid))
+            }
+            .addOnFailureListener {
+            }
+    }
+
+    fun dbUnlikeOnePhoto(uuid: String, uid: String) {
+        db.collection(rootCollection)
+            .limit(1)
+            .whereEqualTo("uuid", uuid)
+            .get()
+            .addOnSuccessListener { result ->
+                var docRef = db.collection(rootCollection).document(result.first().id)
+                docRef.update("likedBy", FieldValue.arrayRemove(uid))
+            }
+            .addOnFailureListener {
+            }
+    }
 
     // https://firebase.google.com/docs/firestore/manage-data/add-data#add_a_document
     fun createPhotoMeta(

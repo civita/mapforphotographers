@@ -2,11 +2,13 @@ package com.cs386p.mapforphotographers
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.location.Geocoder
 import android.net.Uri
 import android.os.Bundle
 import android.provider.ContactsContract.Contacts.Photo
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -28,6 +30,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -46,9 +49,6 @@ class OnePhotoViewing: AppCompatActivity(), OnMapReadyCallback {
         const val photoMetaKey = "photoMeta"
     }
     private val viewModel: PhotoViewModel by viewModels()
-
-    private var position : Int = -1
-
     private var photometa = PhotoMeta()
 
     private lateinit var map: GoogleMap
@@ -58,6 +58,17 @@ class OnePhotoViewing: AppCompatActivity(), OnMapReadyCallback {
     private var _binding: ActivityOnePhotoViewingBinding? = null
     private val binding get() = _binding!!
 
+
+    private fun buttonLiked(isLiked: Boolean) {
+        if(isLiked) {
+            binding.onePhotoViewButtonLike.text = "Liked!"
+            binding.onePhotoViewButtonLike.setBackgroundColor(Color.RED)
+        } else {
+            binding.onePhotoViewButtonLike.text = "Like this photo"
+            binding.onePhotoViewButtonLike.setBackgroundColor(Color.GRAY)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityOnePhotoViewingBinding.inflate(layoutInflater)
@@ -66,12 +77,7 @@ class OnePhotoViewing: AppCompatActivity(), OnMapReadyCallback {
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
         supportActionBar?.setHomeButtonEnabled(false)
 
-        //val photoMetaString = intent.getStringExtra(photoMetaKey)
         photometa = intent.getParcelableExtra(photoMetaKey)!!
-        //photometa = Json.decodeFromString<PhotoMeta>(photoMetaString!!)
-
-        Log.d("xxx_one_photo_viewing", position.toString())
-
 
         //google maps things...
         checkGooglePlayServices()
@@ -85,6 +91,34 @@ class OnePhotoViewing: AppCompatActivity(), OnMapReadyCallback {
 
             binding.onePhotoViewButtonLike.setOnClickListener {
                 // todo
+                val user = FirebaseAuth.getInstance().currentUser
+                if(user != null) {
+                    if(photometa.likedBy.contains(user.uid)) {
+                        // unlike photo
+                        viewModel.unlikeOnePhoto(photometa.uuid)
+                        buttonLiked(false)
+                        photometa.likedBy.remove(user.uid)
+
+                    } else {
+                        viewModel.likeOnePhoto(photometa.uuid)
+                        buttonLiked(true)
+                        photometa.likedBy += user.uid
+                        // like photo
+                    }
+                }
+                //viewModel.likePhoto
+            }
+
+            val user = FirebaseAuth.getInstance().currentUser
+            if(user != null) {
+                if(photometa.likedBy.contains(user.uid)) {
+                    // change button to already liked
+                    buttonLiked(true)
+
+                } else {
+                    // change button to not like
+                    buttonLiked(false)
+                }
             }
 
 
@@ -194,6 +228,4 @@ class OnePhotoViewing: AppCompatActivity(), OnMapReadyCallback {
         }
         locationPermissionRequest.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION))
     }
-
-
 }

@@ -17,6 +17,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -48,8 +49,8 @@ class ProfileFragment : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
-    private val viewModel: ProfileViewModel by viewModels()
-    private val viewModelPhoto: PhotoViewModel by viewModels()
+    private val viewModel: ProfileViewModel by activityViewModels()
+    private val viewModelPhoto: PhotoViewModel by activityViewModels()
 
     private val signInLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()) { result ->
@@ -82,6 +83,20 @@ class ProfileFragment : Fragment() {
         if(user != null) {
             viewModelPhoto.fetchPhotoCount(user.uid)
         }
+    }
+
+    private fun updatePhotoLikedCount() {
+        val user = FirebaseAuth.getInstance().currentUser
+        if(user != null) {
+            viewModelPhoto.fetchPhotoLikedCount(user.uid)
+        }
+    }
+
+    override fun onResume() {
+        Log.d("xxx", "resume!!")
+        viewModelPhoto.fetchPhotoMeta()
+        updatePhotoLikedCount()
+        super.onResume()
     }
 
     override fun onCreateView(
@@ -137,6 +152,10 @@ class ProfileFragment : Fragment() {
             binding.textPhotosCount.text = it.toString()
         }
 
+        viewModelPhoto.observerPhotoLikedCount().observe(viewLifecycleOwner) {
+            binding.textPhotosLiked.text = it.toString()
+        }
+
         binding.textWelcome.setOnClickListener {
             val user = FirebaseAuth.getInstance().currentUser
             if(user != null) {
@@ -182,7 +201,7 @@ class ProfileFragment : Fragment() {
         if (result.resultCode == Activity.RESULT_OK) {
             //result.data?.toString()?.let { Log.d("xxx", it) }
             if (result.data != null && result.data?.data != null) {
-                doOnePhoto(binding.root.context, result.data!!.data!!)
+                doOnePhoto(binding.root.context, result.data!!.data!!, viewModelPhoto)
             }
             //result.data...
             //viewModel.pictureSuccess()

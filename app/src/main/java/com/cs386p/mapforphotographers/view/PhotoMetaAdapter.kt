@@ -30,6 +30,7 @@ class PhotoMetaAdapter(private val viewModel: PhotoViewModel)
                     && oldItem.uuid == newItem.uuid
                     && oldItem.byteSize == newItem.byteSize
                     && oldItem.timeStamp == newItem.timeStamp
+                    && oldItem.likedBy == newItem.likedBy
         }
     }
 
@@ -43,7 +44,7 @@ class PhotoMetaAdapter(private val viewModel: PhotoViewModel)
 //            holder.rowBinding.rowSize.text = photoMeta.byteSize.toString()
             // Note to future me: It might be fun to display the date
             rowBinding.root.setOnClickListener {
-                doOnePhotoViewing(rowBinding.root.context, photoMeta)
+                doOnePhotoViewing(rowBinding.root.context, photoMeta, viewModel)
             }
         }
     }

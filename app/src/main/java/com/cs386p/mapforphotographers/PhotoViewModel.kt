@@ -35,6 +35,7 @@ class PhotoViewModel() : ViewModel() {
     private lateinit var crashMe: String
 
     private var photoCount = MutableLiveData<Int>()
+    private var photoLikedCount = MutableLiveData<Int>()
 
     // NB: Here is a problem with this whole strategy.  It "works" when you use
     // local variables to save these "function pointers."  But the viewModel can be
@@ -70,8 +71,16 @@ class PhotoViewModel() : ViewModel() {
         return photoCount
     }
 
+    fun observerPhotoLikedCount(): LiveData<Int> {
+        return photoLikedCount
+    }
+
     fun fetchPhotoCount(uid: String) {
         dbHelp.dbFetchPhotoCount(uid, photoCount)
+    }
+
+    fun fetchPhotoLikedCount(uid: String) {
+        dbHelp.dbFetchPhotoLikedCount(uid, photoLikedCount)
     }
 
     fun sortInfoClick(sortColumn: SortColumn) {
@@ -124,7 +133,15 @@ class PhotoViewModel() : ViewModel() {
         dbHelp.createPhotoMeta(sortInfo.value!!, photoMeta, photoMetaList)
     }
 
+    fun likeOnePhoto(uuid: String) {
+        val currentUser = firebaseAuthLiveData.getCurrentUser()!!
+        dbHelp.dbLikeOnePhoto(uuid, currentUser.uid)
+    }
 
+    fun unlikeOnePhoto(uuid: String) {
+        val currentUser = firebaseAuthLiveData.getCurrentUser()!!
+        dbHelp.dbUnlikeOnePhoto(uuid, currentUser.uid)
+    }
 
     /////////////////////////////////////////////////////////////
     // This is intended to be set once by MainActivity.
@@ -187,7 +204,7 @@ class PhotoViewModel() : ViewModel() {
 
     // Convenient place to put it as it is shared
     companion object {
-        fun doOnePhoto(context: Context, data: Uri) {
+        fun doOnePhoto(context: Context, data: Uri, viewModel: PhotoViewModel) {
             val onePhotoIntent = Intent(context, OnePhoto::class.java)
             onePhotoIntent.putExtra("""uri""", data.toString())
 //            onePostIntent.putExtra("""title""", redditPost.title.toString())
@@ -196,7 +213,8 @@ class PhotoViewModel() : ViewModel() {
 //            onePostIntent.putExtra("""thumbnailURL""", redditPost.thumbnailURL)
             context.startActivity(onePhotoIntent)
         }
-        fun doOnePhotoViewing(context: Context, photometa: PhotoMeta) {
+        fun doOnePhotoViewing(context: Context, photometa: PhotoMeta, viewModel: PhotoViewModel) {
+            //viewModel.fetchPhotoMeta()
             val onePhotoIntent = Intent(context, OnePhotoViewing::class.java)
             onePhotoIntent.putExtra("""photoMeta""", photometa)
             context.startActivity(onePhotoIntent)

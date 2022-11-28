@@ -72,6 +72,7 @@ class OnePhoto: AppCompatActivity(), OnMapReadyCallback {
         //supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
         supportActionBar?.setHomeButtonEnabled(false)
+        supportActionBar?.title = "Upload a photo"
 
         uri = intent.getStringExtra(uriKey).toString()
         Log.d("xxx_onephoto", uri)
@@ -87,25 +88,31 @@ class OnePhoto: AppCompatActivity(), OnMapReadyCallback {
         if (!uri.isNullOrEmpty()) {
 
             binding.onePhotoButtonSubmit.setOnClickListener {
-                if(!binding.onePhotoTitle.text.isNullOrBlank()) {
-                    // todo: check gps is valid or not
-                    //viewModel.pictureSuccess()
+                if (photometa.pictureLat == "null" || photometa.pictureLng == "null") { // some dirty work to avoid null geotag
+                    val snack = Snackbar.make(it,"Photo needs a location!", Snackbar.LENGTH_LONG)
+                    snack.show()
+                } else {
+                    if(!binding.onePhotoTitle.text.isNullOrBlank()) {
+                        // todo: check gps is valid or not
+                        //viewModel.pictureSuccess()
 //                    val localPhotoFile = File(Uri.parse(uri).toString())
 
-                    val uuid = UUID.randomUUID().toString()
-                    photometa.pictureTitle = binding.onePhotoTitle.text.toString()
-                    photometa.pictureDescription = binding.onePhotoDescription.text.toString()
-                    storage.uploadImage(Uri.parse(uri), uuid) { ret ->
-                        viewModel.createPhotoMeta(photometa, uuid)
-                        // todo snack not shown
-                        val snack = Snackbar.make(it,"Upload completed!", Snackbar.LENGTH_LONG)
+                        val uuid = UUID.randomUUID().toString()
+                        photometa.pictureTitle = binding.onePhotoTitle.text.toString()
+                        photometa.pictureDescription = binding.onePhotoDescription.text.toString()
+                        storage.uploadImage(Uri.parse(uri), uuid) { ret ->
+                            viewModel.createPhotoMeta(photometa, uuid)
+                            // todo snack not shown
+                            val snack = Snackbar.make(it,"Upload completed!", Snackbar.LENGTH_LONG)
+                            snack.show()
+                            finish()
+                        }
+                    } else {
+                        val snack = Snackbar.make(it,"Photo needs a title!", Snackbar.LENGTH_LONG)
                         snack.show()
-                        finish()
                     }
-                } else {
-                    val snack = Snackbar.make(it,"Photo needs a title!", Snackbar.LENGTH_LONG)
-                    snack.show()
                 }
+
             }
 
             binding.onePhotoImage.setImageURI(Uri.parse(uri))
