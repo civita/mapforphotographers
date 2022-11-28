@@ -2,6 +2,7 @@ package com.cs386p.mapforphotographers
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
 import android.provider.ContactsContract.Contacts.Photo
 import android.util.Log
@@ -61,13 +62,20 @@ class PhotoViewModel() : ViewModel() {
     /////////////////////////////////////////////////////////////
     // Notes, memory cache and database interaction
     fun fetchPhotoMeta() {
-        val currentUser = firebaseAuthLiveData.getCurrentUser()!!
-        if (isViewingLiked.value == true) {
-            dbHelp.fetchPhotoMeta(currentUser.uid, true, sortInfo.value!!, photoMetaList)
-        } else {
-            dbHelp.fetchPhotoMeta(currentUser.uid, false, sortInfo.value!!, photoMetaList)
+        val currentUser = firebaseAuthLiveData.getCurrentUser()
+        if (currentUser != null && currentUser.uid.isNotEmpty()) {
+            if (isViewingLiked.value == true) {
+                dbHelp.fetchPhotoMeta(currentUser.uid, true, sortInfo.value!!, photoMetaList)
+            } else {
+                dbHelp.fetchPhotoMeta(currentUser.uid, false, sortInfo.value!!, photoMetaList)
+            }
         }
     }
+
+    fun fetchPublicPhotoMeta() {
+        dbHelp.fetchPhotoMeta("", false, sortInfo.value!!, photoMetaList)
+    }
+
     fun observePhotoMeta(): LiveData<List<PhotoMeta>> {
         return photoMetaList
     }
@@ -225,8 +233,11 @@ class PhotoViewModel() : ViewModel() {
     }
 
     fun glideFetch(uuid: String, imageView: ImageView) {
-        Glide.fetch(storage.uuid2StorageReference(uuid),
-            imageView)
+        Glide.fetch(storage.uuid2StorageReference(uuid), imageView)
+    }
+
+    fun glideFetch(uuid: String, context: Context, zoom: Float): Bitmap {
+        return Glide.fetch(storage.uuid2StorageReference(uuid), context, zoom)
     }
 
     // Convenient place to put it as it is shared

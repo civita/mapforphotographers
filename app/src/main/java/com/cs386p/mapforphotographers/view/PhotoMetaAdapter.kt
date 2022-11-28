@@ -31,6 +31,7 @@ class PhotoMetaAdapter(private val viewModel: PhotoViewModel)
                     && oldItem.byteSize == newItem.byteSize
                     && oldItem.timeStamp == newItem.timeStamp
                     && oldItem.likedBy == newItem.likedBy
+                    && oldItem.private == newItem.private
         }
     }
 

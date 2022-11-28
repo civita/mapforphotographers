@@ -1,6 +1,7 @@
 package com.cs386p.mapforphotographers.glide
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.util.Log
 import android.widget.ImageView
 import com.bumptech.glide.Glide
@@ -45,5 +46,19 @@ object Glide {
             .error(android.R.color.holo_red_dark)
             .override(width, height)
             .into(imageView)
+    }
+
+    fun fetch(storageReference: StorageReference, context: Context, zoom: Float): Bitmap {
+        // Layout engine does not know size of imageView
+        // Hardcoding this here is a bad idea.  What would be better?
+        val width = 400 * zoom / 30
+        val height = 400 * zoom / 30
+        return GlideApp.with(context)
+            .asBitmap() // Try to display animated Gifs and video still
+            .load(storageReference)
+            .apply(glideOptions)
+            .error(android.R.color.holo_red_dark)
+            .submit(width.toInt(), height.toInt())
+            .get()
     }
 }

@@ -57,7 +57,6 @@ class OnePhoto: AppCompatActivity(), OnMapReadyCallback {
     private var photometa = PhotoMeta()
 
     private lateinit var map: GoogleMap
-    private lateinit var geocoder: Geocoder
     private var locationPermissionGranted = false
     private val nearHarryRansomCenter = LatLng(30.284422165825934, -97.74120999100127)
     
@@ -80,7 +79,6 @@ class OnePhoto: AppCompatActivity(), OnMapReadyCallback {
         //google maps things...
         checkGooglePlayServices()
         requestPermission()
-        geocoder = Geocoder(applicationContext)
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.one_photo_mapFrag) as SupportMapFragment
         mapFragment.getMapAsync(this)
@@ -100,6 +98,7 @@ class OnePhoto: AppCompatActivity(), OnMapReadyCallback {
                         val uuid = UUID.randomUUID().toString()
                         photometa.pictureTitle = binding.onePhotoTitle.text.toString()
                         photometa.pictureDescription = binding.onePhotoDescription.text.toString()
+                        photometa.private = binding.onePhotoPrivate.isChecked
                         storage.uploadImage(Uri.parse(uri), uuid) { ret ->
                             viewModel.createPhotoMeta(photometa, uuid)
                             // todo snack not shown

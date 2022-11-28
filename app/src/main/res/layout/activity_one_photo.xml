@@ -15,7 +15,7 @@
         <ImageView
             android:id="@+id/one_photo_image"
             android:layout_width="128dp"
-            android:layout_height="192dp"/>
+            android:layout_height="216dp"/>
 
         <TableLayout
             android:layout_width="fill_parent"
@@ -27,13 +27,11 @@
                 <TextView
                     android:text="Time"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_column="1" />
+                    android:layout_height="wrap_content"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/one_photo_time"
-                    android:layout_column="2" />
+                    android:id="@+id/one_photo_time"/>
             </TableRow>
 
             <TableRow
@@ -42,13 +40,11 @@
                 <TextView
                     android:text="Camera"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_column="1" />
+                    android:layout_height="wrap_content"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/one_photo_camera"
-                    android:layout_column="2" />
+                    android:id="@+id/one_photo_camera"/>
             </TableRow>
 
             <TableRow
@@ -57,13 +53,11 @@
                 <TextView
                     android:text="Lens"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_column="1" />
+                    android:layout_height="wrap_content"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/one_photo_lens"
-                    android:layout_column="2" />
+                    android:id="@+id/one_photo_lens"/>
             </TableRow>
 
             <TableRow
@@ -72,13 +66,11 @@
                 <TextView
                     android:text="Shutter"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_column="1" />
+                    android:layout_height="wrap_content"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/one_photo_shutter_speed"
-                    android:layout_column="2" />
+                    android:id="@+id/one_photo_shutter_speed"/>
             </TableRow>
 
             <TableRow
@@ -87,13 +79,11 @@
                 <TextView
                     android:text="Focal length"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_column="1" />
+                    android:layout_height="wrap_content"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/one_photo_focal_length"
-                    android:layout_column="2" />
+                    android:id="@+id/one_photo_focal_length"/>
             </TableRow>
 
             <TableRow
@@ -102,13 +92,11 @@
                 <TextView
                     android:text="Aperture"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_column="1" />
+                    android:layout_height="wrap_content"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/one_photo_aperture"
-                    android:layout_column="2" />
+                    android:id="@+id/one_photo_aperture"/>
             </TableRow>
 
             <TableRow
@@ -117,13 +105,11 @@
                 <TextView
                     android:text="ISO"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_column="1" />
+                    android:layout_height="wrap_content"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/one_photo_iso"
-                    android:layout_column="2" />
+                    android:id="@+id/one_photo_iso"/>
             </TableRow>
 
             <TableRow
@@ -132,13 +118,11 @@
                 <TextView
                     android:text="Lat"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_column="1" />
+                    android:layout_height="wrap_content"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/one_photo_lat"
-                    android:layout_column="2" />
+                    android:id="@+id/one_photo_lat"/>
             </TableRow>
 
             <TableRow
@@ -147,13 +131,25 @@
                 <TextView
                     android:text="Lng"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_column="1" />
+                    android:layout_height="wrap_content"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/one_photo_lng"
-                    android:layout_column="2" />
+                    android:id="@+id/one_photo_lng"/>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+                <TextView
+                    android:text="Private"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <androidx.appcompat.widget.SwitchCompat
+                    android:layout_gravity="left"
+                    android:id="@+id/one_photo_private"
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"/>
             </TableRow>
         </TableLayout>
     </LinearLayout>

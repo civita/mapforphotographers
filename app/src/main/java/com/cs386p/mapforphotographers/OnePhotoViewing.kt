@@ -52,12 +52,10 @@ class OnePhotoViewing: AppCompatActivity(), OnMapReadyCallback {
     private var photometa = PhotoMeta()
 
     private lateinit var map: GoogleMap
-    private lateinit var geocoder: Geocoder
     private var locationPermissionGranted = false
 
     private var _binding: ActivityOnePhotoViewingBinding? = null
     private val binding get() = _binding!!
-
 
     private fun buttonLiked(isLiked: Boolean) {
         if(isLiked) {
@@ -79,18 +77,14 @@ class OnePhotoViewing: AppCompatActivity(), OnMapReadyCallback {
 
         photometa = intent.getParcelableExtra(photoMetaKey)!!
 
-        //google maps things...
         checkGooglePlayServices()
         requestPermission()
-        geocoder = Geocoder(applicationContext)
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.one_photo_view_mapFrag) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
         if (!photometa.uuid.isNullOrEmpty()) {
-
             binding.onePhotoViewButtonLike.setOnClickListener {
-                // todo
                 val user = FirebaseAuth.getInstance().currentUser
                 if(user != null) {
                     if(photometa.likedBy.contains(user.uid)) {
@@ -100,13 +94,12 @@ class OnePhotoViewing: AppCompatActivity(), OnMapReadyCallback {
                         photometa.likedBy.remove(user.uid)
 
                     } else {
+                        // like photo
                         viewModel.likeOnePhoto(photometa.uuid)
                         buttonLiked(true)
                         photometa.likedBy += user.uid
-                        // like photo
                     }
                 }
-                //viewModel.likePhoto
             }
 
             val user = FirebaseAuth.getInstance().currentUser
@@ -119,9 +112,11 @@ class OnePhotoViewing: AppCompatActivity(), OnMapReadyCallback {
                     // change button to not like
                     buttonLiked(false)
                 }
+            } else {
+                // set button unclickable
+                binding.onePhotoViewButtonLike.isClickable = false
+                binding.onePhotoViewButtonLike.text = "Login to like this photo!"
             }
-
-
             viewModel.glideFetch(photometa.uuid, binding.onePhotoImage)
 
             binding.onePhotoViewPhotographer.text = photometa.ownerName
@@ -137,7 +132,6 @@ class OnePhotoViewing: AppCompatActivity(), OnMapReadyCallback {
             supportActionBar?.title = photometa.pictureTitle
             binding.onePhotoViewDescription.text = photometa.pictureDescription
         }
-
     }
 
     override fun onRequestPermissionsResult(
@@ -179,13 +173,9 @@ class OnePhotoViewing: AppCompatActivity(), OnMapReadyCallback {
             }
             map.isMyLocationEnabled = true
             map.uiSettings.isMyLocationButtonEnabled = true
-
         }
 
-        // todo: add marker and move camera
-
         // Start the map at the Harry Ransom center
-        //map.moveCamera(CameraUpdateFactory.newLatLngZoom(nearHarryRansomCenter, 15.0f))
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(photometa.pictureLat.toDouble(), photometa.pictureLng.toDouble()), 15.0f))
         val titleString = "%.3f".format(photometa.pictureLat.toDouble()) + " " + "%.3f".format(photometa.pictureLng.toDouble())
         map.addMarker(
@@ -193,8 +183,6 @@ class OnePhotoViewing: AppCompatActivity(), OnMapReadyCallback {
                 .position(LatLng(photometa.pictureLat.toDouble(), photometa.pictureLng.toDouble()))
                 .title(titleString)
         )
-
-
     }
 
     private fun checkGooglePlayServices() {

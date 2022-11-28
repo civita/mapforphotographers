@@ -61,7 +61,13 @@ class ViewModelDBHelper() {
         if(isViewingLiked) {
             limitAndGet(db.collection(rootCollection).whereArrayContains("likedBy", uid), notesList)
         } else {
-            limitAndGet(db.collection(rootCollection), notesList)
+            if (uid.isNullOrEmpty()) {
+                // fetch all public photos!
+                Log.d("xxx", "fetch all public photos")
+                limitAndGet(db.collection(rootCollection).whereEqualTo("private", false), notesList)
+            } else {
+                limitAndGet(db.collection(rootCollection).whereEqualTo("ownerUid", uid), notesList)
+            }
         }
     }
 

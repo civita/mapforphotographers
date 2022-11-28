@@ -160,6 +160,8 @@ class ProfileFragment : Fragment() {
 
         viewModelPhoto.observeIsViewingLiked().observe(viewLifecycleOwner) {
             if(it) {
+                val snack = Snackbar.make(binding.root,"You're viewing photos you liked ❤", Snackbar.LENGTH_SHORT)
+                snack.show()
                 viewModelPhoto.fetchPhotoMeta()
                 binding.layoutLiked.setBackgroundColor(Color.parseColor("#ebb6b0"))
             } else {

@@ -15,6 +15,7 @@ data class PhotoMeta(
     var uuid : String = "",
     var byteSize : Long = 0L,
     var pictureTitle: String = "",
+    var private: Boolean = false,
 
     var pictureDescription: String = "",
     var pictureDate: String = "",
