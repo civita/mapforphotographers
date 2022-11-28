@@ -3,6 +3,7 @@ package com.cs386p.mapforphotographers
 import android.Manifest
 import android.content.pm.PackageManager
 import android.location.Geocoder
+import java.math.BigDecimal
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -33,8 +34,11 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
+import java.math.RoundingMode
 import java.net.URI
 import java.util.*
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 
 class OnePhoto: AppCompatActivity(), OnMapReadyCallback {
@@ -62,6 +66,22 @@ class OnePhoto: AppCompatActivity(), OnMapReadyCallback {
     
     private var _binding: ActivityOnePhotoBinding? = null
     private val binding get() = _binding!!
+
+    fun convertToExposureTime(value: Double): String {
+        var ret = ""
+        if (value>0) {
+            ret += "1/"
+            ret += BigDecimal(2.0.pow(value)).setScale(0, RoundingMode.HALF_EVEN).toString()
+        } else {
+            ret += BigDecimal(2.0.pow(-1.0*value)).setScale(0, RoundingMode.HALF_EVEN).toString()
+
+        }
+        return ret + "s"
+    }
+
+    fun convertToFStop(value: Double): String {
+        return "f/" + BigDecimal(sqrt(2.0.pow(value))).setScale(1, RoundingMode.HALF_EVEN).toString()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -129,19 +149,19 @@ class OnePhoto: AppCompatActivity(), OnMapReadyCallback {
                     photometa.pictureCamera = exifInterface.getAttribute(ExifInterface.TAG_MODEL).toString()
                     binding.onePhotoCamera.text = photometa.pictureCamera
 
-                    photometa.pictureLens = exifInterface.getAttribute(ExifInterface.TAG_LENS_MAKE).toString()
+                    photometa.pictureLens = exifInterface.getAttribute(ExifInterface.TAG_LENS_MODEL).toString()
                     binding.onePhotoLens.text = photometa.pictureLens
 
-                    photometa.pictureShutterSpeed = exifInterface.getAttributeDouble(ExifInterface.TAG_SHUTTER_SPEED_VALUE, 0.00).toString()
+                    photometa.pictureShutterSpeed = convertToExposureTime(exifInterface.getAttributeDouble(ExifInterface.TAG_SHUTTER_SPEED_VALUE, 0.00))
                     binding.onePhotoShutterSpeed.text = photometa.pictureShutterSpeed
 
-                    photometa.pictureFocalLength = exifInterface.getAttributeDouble(ExifInterface.TAG_FOCAL_LENGTH, 0.00).toString()
+                    photometa.pictureFocalLength = exifInterface.getAttributeDouble(ExifInterface.TAG_FOCAL_LENGTH, 0.00).toString() + "mm"
                     binding.onePhotoFocalLength.text = photometa.pictureFocalLength
 
-                    photometa.pictureAperture = exifInterface.getAttributeDouble(ExifInterface.TAG_APERTURE_VALUE, 0.00).toString()
+                    photometa.pictureAperture = convertToFStop(exifInterface.getAttributeDouble(ExifInterface.TAG_APERTURE_VALUE, 0.00))
                     binding.onePhotoAperture.text = photometa.pictureAperture
 
-                    photometa.pictureIso = exifInterface.getAttribute(ExifInterface.TAG_ISO_SPEED).toString() // todo: null?
+                    photometa.pictureIso = exifInterface.getAttribute(ExifInterface.TAG_PHOTOGRAPHIC_SENSITIVITY).toString()
                     binding.onePhotoIso.text = photometa.pictureIso
 
                     //photometa.pictureLat = exifInterface.getAttributeDouble(ExifInterface.TAG_GPS_LATITUDE, 0.00).toString()
