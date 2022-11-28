@@ -11,10 +11,12 @@ class ViewModelDBHelper() {
     private val db: FirebaseFirestore = FirebaseFirestore.getInstance()
     private val rootCollection = "allPhotos"
 
-    fun fetchPhotoMeta(sortInfo: SortInfo,
+    fun fetchPhotoMeta(uid: String,
+                       isViewingLiked: Boolean,
+                       sortInfo: SortInfo,
                        notesList: MutableLiveData<List<PhotoMeta>>
     ) {
-        dbFetchPhotoMeta(sortInfo, notesList)
+        dbFetchPhotoMeta(uid, isViewingLiked, sortInfo, notesList)
     }
     // If we want to listen for real time updates use this
     // .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
@@ -27,32 +29,39 @@ class ViewModelDBHelper() {
             .limit(100)
             .get()
             .addOnSuccessListener { result ->
-                Log.d(javaClass.simpleName, "allNotes fetch ${result!!.documents.size}")
+                Log.d(javaClass.simpleName, "allPhotos fetch ${result!!.documents.size}")
                 // NB: This is done on a background thread
                 notesList.postValue(result.documents.mapNotNull {
                     it.toObject(PhotoMeta::class.java)
                 })
             }
             .addOnFailureListener {
-                Log.d(javaClass.simpleName, "allNotes fetch FAILED ", it)
+                Log.d(javaClass.simpleName, "allPhotos fetch FAILED ", it)
             }
     }
     /////////////////////////////////////////////////////////////
     // Interact with Firestore db
     // https://firebase.google.com/docs/firestore/query-data/order-limit-data
-    private fun dbFetchPhotoMeta(sortInfo: SortInfo,
+    private fun dbFetchPhotoMeta(uid: String,
+                                 isViewingLiked: Boolean,
+                                 sortInfo: SortInfo,
                                  notesList: MutableLiveData<List<PhotoMeta>>
     ) {
         // XXX Write me and use limitAndGet
         //todo sortInfo
-        val orderByName = when (sortInfo.sortColumn) {
-            SortColumn.TITLE -> "pictureTitle"
-            SortColumn.SIZE -> "byteSize"
-        }
-        if (sortInfo.ascending) {
-            limitAndGet(db.collection(rootCollection).orderBy(orderByName, Query.Direction.ASCENDING), notesList)
+//        val orderByName = when (sortInfo.sortColumn) {
+//            SortColumn.TITLE -> "pictureTitle"
+//            SortColumn.SIZE -> "byteSize"
+//        }
+//        if (sortInfo.ascending) {
+//            limitAndGet(db.collection(rootCollection).orderBy(orderByName, Query.Direction.ASCENDING), notesList)
+//        } else {
+//            limitAndGet(db.collection(rootCollection).orderBy(orderByName, Query.Direction.DESCENDING), notesList)
+//        }
+        if(isViewingLiked) {
+            limitAndGet(db.collection(rootCollection).whereArrayContains("likedBy", uid), notesList)
         } else {
-            limitAndGet(db.collection(rootCollection).orderBy(orderByName, Query.Direction.DESCENDING), notesList)
+            limitAndGet(db.collection(rootCollection), notesList)
         }
     }
 
@@ -122,7 +131,7 @@ class ViewModelDBHelper() {
                     javaClass.simpleName,
                     "photoMeta create \"${photoMeta.pictureTitle}\" id: ${photoMeta.firestoreID}"
                 )
-                dbFetchPhotoMeta(sortInfo, notesList)
+                dbFetchPhotoMeta(photoMeta.ownerUid, false, sortInfo, notesList)
             }
             .addOnFailureListener { e ->
                 Log.d(javaClass.simpleName, "photoMeta create FAILED \"${photoMeta.pictureTitle}\"")
@@ -145,7 +154,7 @@ class ViewModelDBHelper() {
                     javaClass.simpleName,
                     "photoMeta delete \"${photoMeta.pictureTitle}\" id: ${photoMeta.firestoreID}"
                 )
-                dbFetchPhotoMeta(sortInfo, photoMetaList)
+                dbFetchPhotoMeta(photoMeta.ownerUid, false, sortInfo, photoMetaList)
             }
             .addOnFailureListener { e ->
                 Log.d(javaClass.simpleName, "photoMeta deleting FAILED \"${photoMeta.pictureTitle}\"")

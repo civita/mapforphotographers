@@ -3,6 +3,7 @@ package com.cs386p.mapforphotographers.ui.profile
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -134,6 +135,7 @@ class ProfileFragment : Fragment() {
                 AuthInit(viewModel, signInLauncher)
             } else {
                 viewModel.signOut()
+                viewModelPhoto.signOut()
                 binding.textWelcome.visibility = View.VISIBLE
                 binding.textEditUsername.visibility = View.GONE
             }
@@ -148,12 +150,26 @@ class ProfileFragment : Fragment() {
             binding.textEditUsername.setText(it)
         }
 
-        viewModelPhoto.observerPhotoCount().observe(viewLifecycleOwner) {
+        viewModelPhoto.observePhotoCount().observe(viewLifecycleOwner) {
             binding.textPhotosCount.text = it.toString()
         }
 
         viewModelPhoto.observerPhotoLikedCount().observe(viewLifecycleOwner) {
             binding.textPhotosLiked.text = it.toString()
+        }
+
+        viewModelPhoto.observeIsViewingLiked().observe(viewLifecycleOwner) {
+            if(it) {
+                viewModelPhoto.fetchPhotoMeta()
+                binding.layoutLiked.setBackgroundColor(Color.parseColor("#ebb6b0"))
+            } else {
+                viewModelPhoto.fetchPhotoMeta()
+                binding.layoutLiked.setBackgroundColor(Color.TRANSPARENT)
+            }
+        }
+
+        binding.layoutLiked.setOnClickListener {
+            viewModelPhoto.toggleIsViewingLiked()
         }
 
         binding.textWelcome.setOnClickListener {
@@ -175,8 +191,6 @@ class ProfileFragment : Fragment() {
                 } else {
                     val snack = Snackbar.make(it,"Please provide a display name!",Snackbar.LENGTH_LONG)
                     snack.show()
-//                    val toast = Toast.makeText(context, "Please provide a display name!", Toast.LENGTH_SHORT)
-//                    toast.show()
                 }
             }
         }
@@ -201,7 +215,8 @@ class ProfileFragment : Fragment() {
         if (result.resultCode == Activity.RESULT_OK) {
             //result.data?.toString()?.let { Log.d("xxx", it) }
             if (result.data != null && result.data?.data != null) {
-                doOnePhoto(binding.root.context, result.data!!.data!!, viewModelPhoto)
+                doOnePhoto(binding.root.context, result.data!!.data!!)
+                viewModelPhoto.updateIsViewingLiked(false)
             }
             //result.data...
             //viewModel.pictureSuccess()

@@ -36,6 +36,9 @@ class PhotoViewModel() : ViewModel() {
 
     private var photoCount = MutableLiveData<Int>()
     private var photoLikedCount = MutableLiveData<Int>()
+    private var isViewingLiked = MutableLiveData<Boolean>().apply {
+        value = false
+    }
 
     // NB: Here is a problem with this whole strategy.  It "works" when you use
     // local variables to save these "function pointers."  But the viewModel can be
@@ -58,7 +61,12 @@ class PhotoViewModel() : ViewModel() {
     /////////////////////////////////////////////////////////////
     // Notes, memory cache and database interaction
     fun fetchPhotoMeta() {
-        dbHelp.fetchPhotoMeta(sortInfo.value!!, photoMetaList)
+        val currentUser = firebaseAuthLiveData.getCurrentUser()!!
+        if (isViewingLiked.value == true) {
+            dbHelp.fetchPhotoMeta(currentUser.uid, true, sortInfo.value!!, photoMetaList)
+        } else {
+            dbHelp.fetchPhotoMeta(currentUser.uid, false, sortInfo.value!!, photoMetaList)
+        }
     }
     fun observePhotoMeta(): LiveData<List<PhotoMeta>> {
         return photoMetaList
@@ -67,8 +75,27 @@ class PhotoViewModel() : ViewModel() {
         return sortInfo
     }
 
-    fun observerPhotoCount(): LiveData<Int> {
+    fun observePhotoCount(): LiveData<Int> {
         return photoCount
+    }
+
+    fun observeIsViewingLiked(): LiveData<Boolean> {
+        return isViewingLiked
+    }
+
+    fun updateIsViewingLiked(value: Boolean) {
+        isViewingLiked.postValue(value)
+    }
+
+    fun toggleIsViewingLiked() {
+        isViewingLiked.postValue(!isViewingLiked.value!!)
+    }
+
+    fun signOut() {
+        photoMetaList.postValue(listOf())
+        photoCount.postValue(0)
+        photoLikedCount.postValue(0)
+        isViewingLiked.postValue(false)
     }
 
     fun observerPhotoLikedCount(): LiveData<Int> {
@@ -204,7 +231,7 @@ class PhotoViewModel() : ViewModel() {
 
     // Convenient place to put it as it is shared
     companion object {
-        fun doOnePhoto(context: Context, data: Uri, viewModel: PhotoViewModel) {
+        fun doOnePhoto(context: Context, data: Uri) {
             val onePhotoIntent = Intent(context, OnePhoto::class.java)
             onePhotoIntent.putExtra("""uri""", data.toString())
 //            onePostIntent.putExtra("""title""", redditPost.title.toString())
@@ -213,7 +240,7 @@ class PhotoViewModel() : ViewModel() {
 //            onePostIntent.putExtra("""thumbnailURL""", redditPost.thumbnailURL)
             context.startActivity(onePhotoIntent)
         }
-        fun doOnePhotoViewing(context: Context, photometa: PhotoMeta, viewModel: PhotoViewModel) {
+        fun doOnePhotoViewing(context: Context, photometa: PhotoMeta) {
             //viewModel.fetchPhotoMeta()
             val onePhotoIntent = Intent(context, OnePhotoViewing::class.java)
             onePhotoIntent.putExtra("""photoMeta""", photometa)
