@@ -62,7 +62,7 @@ class OnePhotoViewing: AppCompatActivity(), OnMapReadyCallback {
     private fun buttonLiked(isLiked: Boolean) {
         if(isLiked) {
             binding.onePhotoViewButtonLike.text = "Liked!"
-            binding.onePhotoViewButtonLike.setBackgroundColor(Color.RED)
+            binding.onePhotoViewButtonLike.setBackgroundColor(Color.parseColor("#d94434"))
         } else {
             binding.onePhotoViewButtonLike.text = "Like this photo"
             binding.onePhotoViewButtonLike.setBackgroundColor(Color.GRAY)
