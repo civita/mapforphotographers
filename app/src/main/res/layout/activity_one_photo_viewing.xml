@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -82,21 +88,6 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent">
                 <TextView
-                    android:text="Shutter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_column="1" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/one_photo_view_shutter_speed"
-                    android:layout_column="2" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent">
-                <TextView
                     android:text="Focal length"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -105,6 +96,21 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/one_photo_view_focal_length"
+                    android:layout_column="2" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+                <TextView
+                    android:text="Exposure Time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/one_photo_view_shutter_speed"
                     android:layout_column="2" />
             </TableRow>
 
@@ -173,9 +179,9 @@
     <TextView
         android:id="@+id/one_photo_view_description"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="wrap_content"
         android:maxLines="3"
-        android:hint="Photographer didn't provide a description :("
+        android:hint="Photographer didn't provide a description :(\n\n"
         android:textSize="18sp"/>
 
     <FrameLayout
@@ -199,4 +205,19 @@
         android:textColor="@color/white"
         android:backgroundTint="#999999"
         android:id="@+id/one_photo_view_button_like"/>
-</LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black"
+        android:visibility="gone"
+        android:id="@+id/one_photo_layout_full_screen">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/one_photo_image_full_screen"
+            />
+    </LinearLayout>
+
+</FrameLayout>

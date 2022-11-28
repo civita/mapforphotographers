@@ -15,9 +15,16 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.net.toFile
+import androidx.core.os.bundleOf
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.exifinterface.media.ExifInterface
+import androidx.fragment.app.commit
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.navigation.Navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.cs386p.mapforphotographers.databinding.ActivityOnePhotoBinding
 import com.cs386p.mapforphotographers.databinding.ActivityOnePhotoViewingBinding
 import com.cs386p.mapforphotographers.model.PhotoMeta
@@ -40,6 +47,7 @@ import kotlinx.serialization.json.Json
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
+import java.lang.reflect.Array.newInstance
 import java.net.URI
 import java.util.*
 
@@ -48,14 +56,34 @@ class OnePhotoViewing: AppCompatActivity(), OnMapReadyCallback {
     companion object {
         const val photoMetaKey = "photoMeta"
     }
-    private val viewModel: PhotoViewModel by viewModels()
-    private var photometa = PhotoMeta()
+
+    val viewModel: PhotoViewModel by viewModels()
+    var photometa = PhotoMeta()
 
     private lateinit var map: GoogleMap
     private var locationPermissionGranted = false
 
     private var _binding: ActivityOnePhotoViewingBinding? = null
     private val binding get() = _binding!!
+
+    fun hideBars() {
+        val windowInsetsController =
+            WindowCompat.getInsetsController(window, window.decorView)
+        // Configure the behavior of the hidden system bars
+        windowInsetsController.systemBarsBehavior =
+            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        // Hide both the status bar and the navigation bar
+        windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
+        // XXX Write me (one liner)
+        supportActionBar?.hide()
+    }
+    fun showBars() {
+        val windowInsetsController =
+            WindowCompat.getInsetsController(window, window.decorView)
+        // Hide both the status bar and the navigation bar
+        windowInsetsController.show(WindowInsetsCompat.Type.systemBars())
+        supportActionBar?.show()
+    }
 
     private fun buttonLiked(isLiked: Boolean) {
         if(isLiked) {
@@ -118,6 +146,16 @@ class OnePhotoViewing: AppCompatActivity(), OnMapReadyCallback {
                 binding.onePhotoViewButtonLike.text = "Login to like this photo!"
             }
             viewModel.glideFetch(photometa.uuid, binding.onePhotoImage)
+            viewModel.glideFetchFull(photometa.uuid, binding.onePhotoImageFullScreen)
+
+            binding.onePhotoImage.setOnClickListener {
+                hideBars()
+                binding.onePhotoLayoutFullScreen.visibility = View.VISIBLE
+            }
+            binding.onePhotoImageFullScreen.setOnClickListener {
+                showBars()
+                binding.onePhotoLayoutFullScreen.visibility = View.GONE
+            }
 
             binding.onePhotoViewPhotographer.text = photometa.ownerName
             binding.onePhotoViewTime.text = photometa.pictureDate

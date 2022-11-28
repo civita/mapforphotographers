@@ -15,7 +15,7 @@
         <ImageView
             android:id="@+id/one_photo_image"
             android:layout_width="128dp"
-            android:layout_height="216dp"/>
+            android:layout_height="256dp"/>
 
         <TableLayout
             android:layout_width="fill_parent"
@@ -64,19 +64,6 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent">
                 <TextView
-                    android:text="Shutter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/one_photo_shutter_speed"/>
-            </TableRow>
-
-            <TableRow
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent">
-                <TextView
                     android:text="Focal length"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
@@ -84,6 +71,20 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/one_photo_focal_length"/>
+            </TableRow>
+
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+                <TextView
+                    android:text="Exposure Time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/one_photo_shutter_speed"/>
             </TableRow>
 
             <TableRow
@@ -142,6 +143,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent">
                 <TextView
+                    android:layout_gravity="center_vertical"
                     android:text="Private"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
@@ -164,10 +166,12 @@
     <EditText
         android:id="@+id/one_photo_description"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="wrap_content"
         android:maxLines="3"
-        android:inputType="text"
-        android:hint="Description"/>
+        android:inputType="textMultiLine"
+        android:scrollHorizontally="false"
+        android:lines="3"
+        android:hint="\nDescription\n\n"/>
 
     <FrameLayout
         android:id="@+id/mapFL"

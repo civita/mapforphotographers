@@ -236,6 +236,10 @@ class PhotoViewModel() : ViewModel() {
         Glide.fetch(storage.uuid2StorageReference(uuid), imageView)
     }
 
+    fun glideFetchFull(uuid: String, imageView: ImageView) {
+        Glide.fetchFull(storage.uuid2StorageReference(uuid), imageView)
+    }
+
     fun glideFetch(uuid: String, context: Context, zoom: Float): Bitmap {
         return Glide.fetch(storage.uuid2StorageReference(uuid), context, zoom)
     }

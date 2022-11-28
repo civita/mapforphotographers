@@ -48,6 +48,20 @@ object Glide {
             .into(imageView)
     }
 
+    fun fetchFull(storageReference: StorageReference, imageView: ImageView) {
+        // Layout engine does not know size of imageView
+        // Hardcoding this here is a bad idea.  What would be better?
+        val width = imageView.width
+        val height = imageView.height
+        GlideApp.with(imageView.context)
+            .asBitmap() // Try to display animated Gifs and video still
+            .load(storageReference)
+            .apply(glideOptions)
+            .error(android.R.color.holo_red_dark)
+            .override(width, height)
+            .into(imageView)
+    }
+
     fun fetch(storageReference: StorageReference, context: Context, zoom: Float): Bitmap {
         // Layout engine does not know size of imageView
         // Hardcoding this here is a bad idea.  What would be better?

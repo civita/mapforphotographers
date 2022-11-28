@@ -143,7 +143,7 @@ class OnePhoto: AppCompatActivity(), OnMapReadyCallback {
                 if (exifInterface != null) {
 
                     Log.d("xxx_onephoto", exifInterface.toString())
-                    photometa.pictureDate = exifInterface.getAttribute(ExifInterface.TAG_DATETIME).toString()
+                    photometa.pictureDate = exifInterface.getAttribute(ExifInterface.TAG_DATETIME_ORIGINAL).toString()
                     binding.onePhotoTime.text = photometa.pictureDate
 
                     photometa.pictureCamera = exifInterface.getAttribute(ExifInterface.TAG_MODEL).toString()
