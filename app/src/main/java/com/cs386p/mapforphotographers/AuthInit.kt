@@ -46,6 +46,7 @@ class AuthInit(viewModel: ProfileViewModel, signInLauncher: ActivityResultLaunch
             val signInIntent = AuthUI.getInstance()
                 .createSignInIntentBuilder()
                 .setAvailableProviders(providers)
+                .setTheme(R.style.Theme_MapForPhotographers)
                 .build()
             signInLauncher.launch(signInIntent)
         } else {

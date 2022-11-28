@@ -12,6 +12,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.net.toFile
@@ -112,6 +113,7 @@ class OnePhotoViewing: AppCompatActivity(), OnMapReadyCallback {
         mapFragment.getMapAsync(this)
 
         if (!photometa.uuid.isNullOrEmpty()) {
+
             binding.onePhotoViewButtonLike.setOnClickListener {
                 val user = FirebaseAuth.getInstance().currentUser
                 if(user != null) {
@@ -132,6 +134,27 @@ class OnePhotoViewing: AppCompatActivity(), OnMapReadyCallback {
 
             val user = FirebaseAuth.getInstance().currentUser
             if(user != null) {
+                if(user.uid == photometa.ownerUid) {
+                    // enable delete button
+                    binding.onePhotoViewButtonDelete.visibility = View.VISIBLE
+                    binding.onePhotoViewButtonDelete.setOnClickListener {
+                        val builder = AlertDialog.Builder(this)
+                        builder.setMessage("Are you sure you want to delete?")
+                            .setCancelable(false)
+                            .setPositiveButton("Yes") { dialog, id ->
+                                // Delete selected note from database
+                                viewModel.removePhoto(photometa)
+                                finish()
+                            }
+                            .setNegativeButton("No") { dialog, id ->
+                                // Dismiss the dialog
+                                dialog.dismiss()
+                            }
+                        val alert = builder.create()
+                        alert.show()
+                    }
+                }
+
                 if(photometa.likedBy.contains(user.uid)) {
                     // change button to already liked
                     buttonLiked(true)
@@ -141,6 +164,9 @@ class OnePhotoViewing: AppCompatActivity(), OnMapReadyCallback {
                     buttonLiked(false)
                 }
             } else {
+                // disable delete button
+                binding.onePhotoViewButtonDelete.visibility = View.GONE
+
                 // set button unclickable
                 binding.onePhotoViewButtonLike.isClickable = false
                 binding.onePhotoViewButtonLike.text = "Login to like this photo!"

@@ -132,6 +132,13 @@ class PhotoViewModel() : ViewModel() {
         }
     }
 
+    fun removePhoto(photoMeta: PhotoMeta) {
+        // XXX Deletion requires two different operations.  What are they?
+        storage.deleteImage(photoMeta.uuid)
+        //EEE // XXX What do to before we delete note?
+        dbHelp.removePhotoMeta(observeSortInfo().value!!, photoMeta, photoMetaList)
+    }
+
     fun removePhotoAt(position: Int) {
         // XXX Deletion requires two different operations.  What are they?
         val photoMeta = getPhotoMeta(position)

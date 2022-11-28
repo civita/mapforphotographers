@@ -171,7 +171,10 @@ class ProfileFragment : Fragment() {
         }
 
         binding.layoutLiked.setOnClickListener {
-            viewModelPhoto.toggleIsViewingLiked()
+            val user = FirebaseAuth.getInstance().currentUser
+            if(user != null) {
+                viewModelPhoto.toggleIsViewingLiked()
+            }
         }
 
         binding.textWelcome.setOnClickListener {
@@ -191,7 +194,7 @@ class ProfileFragment : Fragment() {
                     binding.textEditUsername.visibility = View.GONE
                     hideKeyboard()
                 } else {
-                    val snack = Snackbar.make(it,"Please provide a display name!",Snackbar.LENGTH_LONG)
+                    val snack = Snackbar.make(it,"Please provide a display name!",Snackbar.LENGTH_SHORT)
                     snack.show()
                 }
             }
@@ -204,6 +207,9 @@ class ProfileFragment : Fragment() {
                 Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI).also {
                     importPhotoLauncher.launch(it)
                 }
+            } else {
+                val snack = Snackbar.make(it,"Please login first!", Snackbar.LENGTH_SHORT)
+                snack.show()
             }
         }
 

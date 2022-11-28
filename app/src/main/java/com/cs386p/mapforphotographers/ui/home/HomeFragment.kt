@@ -99,6 +99,11 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         _binding = null
     }
 
+    override fun onResume() {
+        viewModelPhoto.fetchPublicPhotoMeta()
+        super.onResume()
+    }
+
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
