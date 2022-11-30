@@ -25,6 +25,8 @@ At the bottom there is a upload button, and users can upload existing photo thro
 
 ## Liked Photo
 
+![](https://i.imgur.com/NFNY94A.png)
+
 There a text field showing how many photo a user has liked. By clicking the text field, the number is highlighted and users can browse photos they liked. Users can back to normal mode (viewing photos they uploaded) by click the text field again.
 
 # Activity_Single_Image
