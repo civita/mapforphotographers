@@ -1,5 +1,6 @@
 package com.cs386p.mapforphotographers.view
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -32,6 +33,16 @@ class PhotoMetaAdapter(private val viewModel: PhotoViewModel)
                     && oldItem.timeStamp == newItem.timeStamp
                     && oldItem.likedBy == newItem.likedBy
                     && oldItem.private == newItem.private
+                    && oldItem.pictureLat == newItem.pictureLat
+                    && oldItem.pictureLng == newItem.pictureLng
+                    && oldItem.pictureAperture == newItem.pictureAperture
+                    && oldItem.pictureCamera == newItem.pictureCamera
+                    && oldItem.pictureDate == newItem.pictureDate
+                    && oldItem.pictureDescription == newItem.pictureDescription
+                    && oldItem.pictureFocalLength == newItem.pictureFocalLength
+                    && oldItem.pictureIso == newItem.pictureIso
+                    && oldItem.pictureLens == newItem.pictureLens
+                    && oldItem.pictureShutterSpeed == newItem.pictureShutterSpeed
         }
     }
 
@@ -39,11 +50,13 @@ class PhotoMetaAdapter(private val viewModel: PhotoViewModel)
         RecyclerView.ViewHolder(rowBinding.root) {
 
         fun bind(holder: VH, position: Int) {
-            val photoMeta = viewModel.getPhotoMeta(position)
+            //val photoMeta = viewModel.getPhotoMeta(position)
+            val photoMeta = getItem(position)
             viewModel.glideFetch(photoMeta.uuid, rowBinding.rowImageView)
 //            holder.rowBinding.rowPictureTitle.text = photoMeta.pictureTitle
 //            holder.rowBinding.rowSize.text = photoMeta.byteSize.toString()
-            // Note to future me: It might be fun to display the date
+            // Note to future me: It might be fun to display the date]
+            Log.d("xxx_adapter", photoMeta.pictureTitle)
             rowBinding.root.setOnClickListener {
                 doOnePhotoViewing(rowBinding.root.context, photoMeta)
             }

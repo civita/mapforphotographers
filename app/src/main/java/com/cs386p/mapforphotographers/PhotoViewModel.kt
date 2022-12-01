@@ -3,17 +3,23 @@ package com.cs386p.mapforphotographers
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.net.Uri
 import android.provider.ContactsContract.Contacts.Photo
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.widget.ImageView
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.cs386p.mapforphotographers.model.PhotoMeta
 import com.cs386p.mapforphotographers.ui.profile.ProfileFragment
 import com.cs386p.mapforphotographers.glide.Glide
 import java.util.*
+import kotlin.reflect.full.memberProperties
 
 enum class SortColumn {
     TITLE,
@@ -24,7 +30,10 @@ class PhotoViewModel() : ViewModel() {
     // Remember the uuid, and hence file name of file camera will create
     private var pictureUUID: String =""
     // LiveData for entire note list, all images
-    private var photoMetaList = MutableLiveData<List<PhotoMeta>>()
+    private val photoMetaList = MutableLiveData<List<PhotoMeta>>().apply {
+        value = listOf()
+    }
+
     private var sortInfo = MutableLiveData(
         SortInfo(SortColumn.TITLE, true))
     // Firestore state
@@ -268,5 +277,59 @@ class PhotoViewModel() : ViewModel() {
             onePhotoIntent.putExtra("""photoMeta""", photometa)
             context.startActivity(onePhotoIntent)
         }
+    }
+
+    // Search function
+    private var searchTerm = MutableLiveData<String>().apply {
+        value = ""
+    }
+
+    fun setSearchTerm(s: String) {
+        searchTerm.value = s
+    }
+
+    fun searchTermRefresh() {
+        Log.d("xxx_searchTerm", "refreshed")
+        val fetch = searchTerm.value
+        searchTerm.value = fetch
+    }
+
+    private fun search(fulltext: String?, subtext: String): Boolean {
+        if( subtext.isEmpty() ) return true
+        val i = fulltext?.indexOf(subtext, ignoreCase = true)
+        if( i == -1 ) return false
+        return true
+    }
+
+
+    private fun filterList(): List<PhotoMeta> {
+        // We know value is not null
+        val searchTermValue = searchTerm.value!!
+        return if (photoMetaList.value.isNullOrEmpty()) {
+            listOf()
+        } else {
+            photoMetaList.value!!.filter {
+                var found = false
+                for (property in PhotoMeta::class.memberProperties) {
+                    if(property.name.contains("picture") || property.name.contains("ownerName")) {
+                        if (search(property.get(it)?.toString(), searchTermValue)) {
+                            Log.d("xxx_photoviewmodel", property.get(it)?.toString()?: "...")
+                            found = true
+                        }
+                    }
+                }
+                found
+            }
+        }
+    }
+
+    private var livePhotoMetaList = MediatorLiveData<List<PhotoMeta>>().apply {
+        addSource(searchTerm) {value = filterList()}
+        addSource(photoMetaList) {value = photoMetaList.value}
+        //value = photoMetaList.value
+    }
+
+    fun observeLivePhotoMeta(): LiveData<List<PhotoMeta>> {
+        return livePhotoMetaList
     }
 }

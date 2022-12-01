@@ -51,7 +51,7 @@ class ProfileFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
     private val viewModel: ProfileViewModel by activityViewModels()
-    private val viewModelPhoto: PhotoViewModel by activityViewModels()
+    private val viewModelPhoto: PhotoViewModel by viewModels()
 
     private val signInLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()) { result ->
@@ -70,7 +70,7 @@ class ProfileFragment : Fragment() {
     // https://stackoverflow.com/a/70562398
     // https://stackoverflow.com/questions/1109022/close-hide-the-android-soft-keyboard
     // https://stackoverflow.com/questions/7789514/how-to-get-activitys-windowtoken-without-view
-    open fun hideKeyboard() {
+    fun hideKeyboard() {
         if (activity != null){
             // Hide soft keyboard
             val imm =

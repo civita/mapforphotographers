@@ -36,7 +36,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     private lateinit var map: GoogleMap
     private lateinit var geocoder: Geocoder
     private var locationPermissionGranted = false
-    private val viewModelPhoto: PhotoViewModel by viewModels()
+    private val viewModelPhoto: PhotoViewModel by activityViewModels()
     private var _binding: FragmentHomeBinding? = null
     private var photoList: List<PhotoMeta> = listOf()
     private var zoom: Float = 0.0F
@@ -66,23 +66,26 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
 
         viewModelPhoto.observePhotoMeta().observe(viewLifecycleOwner) {
-            photoList = it
-            Log.d("xxx_home", it.size.toString())
-            map.clear()
-            zoom = map.cameraPosition.zoom
-            for (i in it.indices) {
-
-                MainScope().launch(Dispatchers.Default) {
-                    // aWait for bitmap job to finish
-                    val bitmap = viewModelPhoto.glideFetch(it[i].uuid, binding.root.context, zoom)
-                    // Modify map on main thread
-                    withContext(Dispatchers.Main) {
-                        map.addMarker(
-                            MarkerOptions()
-                                .position(LatLng(it[i].pictureLat.toDouble(), it[i].pictureLng.toDouble()))
-                                .title(it[i].pictureTitle)
-                                .icon(BitmapDescriptorFactory.fromBitmap(bitmap))
-                        )?.tag = i
+            if (this::map.isInitialized) {
+                photoList = it
+                Log.d("xxx_home", it.size.toString())
+                map.clear()
+                zoom = map.cameraPosition.zoom
+                for (i in it.indices) {
+                    MainScope().launch(Dispatchers.Default) {
+                        // aWait for bitmap job to finish
+                        if(it.size > i) {
+                            val bitmap = viewModelPhoto.glideFetch(it[i].uuid, binding.root.context, zoom)
+                            // Modify map on main thread
+                            withContext(Dispatchers.Main) {
+                                map.addMarker(
+                                    MarkerOptions()
+                                        .position(LatLng(it[i].pictureLat.toDouble(), it[i].pictureLng.toDouble()))
+                                        .title(it[i].pictureTitle)
+                                        .icon(BitmapDescriptorFactory.fromBitmap(bitmap))
+                                )?.tag = i
+                            }
+                        }
                     }
                 }
             }
