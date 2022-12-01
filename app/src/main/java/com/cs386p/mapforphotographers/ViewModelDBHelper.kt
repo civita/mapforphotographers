@@ -26,7 +26,8 @@ class ViewModelDBHelper() {
                             notesList: MutableLiveData<List<PhotoMeta>>
     ) {
         query
-            .limit(100)
+            //.limit(100)
+            .orderBy("timeStamp", Query.Direction.DESCENDING)
             .get()
             .addOnSuccessListener { result ->
                 Log.d(javaClass.simpleName, "allPhotos fetch ${result!!.documents.size}")

@@ -144,6 +144,9 @@ class OnePhoto: AppCompatActivity(), OnMapReadyCallback {
 
                     Log.d("xxx_onephoto", exifInterface.toString())
                     photometa.pictureDate = exifInterface.getAttribute(ExifInterface.TAG_DATETIME_ORIGINAL).toString()
+                    if (photometa.pictureDate == "null")
+                        photometa.pictureDate = exifInterface.getAttribute(ExifInterface.TAG_DATETIME).toString()
+
                     binding.onePhotoTime.text = photometa.pictureDate
 
                     photometa.pictureCamera = exifInterface.getAttribute(ExifInterface.TAG_MODEL).toString()
