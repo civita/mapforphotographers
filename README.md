@@ -4,6 +4,7 @@ Map of Photographers
 *Android app created to introduce photographers to new scenic spots.*
 
 Jooyeon Yang - jy24328
+
 Michael Chang - mlc5457
 
 # 1. Introduction
@@ -132,3 +133,5 @@ We have provided our `google-services.json` in the `/app` folder. You are able t
 - XML: 1031
 
 # 11. Code frequency graph
+
+![](https://i.imgur.com/KurJrm2.png)
