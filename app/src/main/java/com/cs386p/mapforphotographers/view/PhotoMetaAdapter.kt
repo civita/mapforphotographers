@@ -10,10 +10,6 @@ import com.cs386p.mapforphotographers.PhotoViewModel
 import com.cs386p.mapforphotographers.PhotoViewModel.Companion.doOnePhotoViewing
 import com.cs386p.mapforphotographers.databinding.RowBinding
 import com.cs386p.mapforphotographers.model.PhotoMeta
-import com.cs386p.mapforphotographers.ui.profile.ProfileViewModel
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
-
 
 class PhotoMetaAdapter(private val viewModel: PhotoViewModel)
     : ListAdapter<PhotoMeta, PhotoMetaAdapter.VH>(Diff()) {

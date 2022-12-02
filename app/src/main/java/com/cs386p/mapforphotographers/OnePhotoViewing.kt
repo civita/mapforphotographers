@@ -3,10 +3,7 @@ package com.cs386p.mapforphotographers
 import android.Manifest
 import android.content.pm.PackageManager
 import android.graphics.Color
-import android.location.Geocoder
-import android.net.Uri
 import android.os.Bundle
-import android.provider.ContactsContract.Contacts.Photo
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -15,18 +12,9 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.net.toFile
-import androidx.core.os.bundleOf
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import androidx.exifinterface.media.ExifInterface
-import androidx.fragment.app.commit
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.navigation.Navigation.findNavController
-import androidx.navigation.fragment.findNavController
-import com.cs386p.mapforphotographers.databinding.ActivityOnePhotoBinding
 import com.cs386p.mapforphotographers.databinding.ActivityOnePhotoViewingBinding
 import com.cs386p.mapforphotographers.model.PhotoMeta
 import com.google.android.gms.common.ConnectionResult
@@ -37,21 +25,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
-import java.io.File
-import java.io.IOException
-import java.io.InputStream
-import java.lang.reflect.Array.newInstance
-import java.net.URI
-import java.util.*
-
 
 class OnePhotoViewing: AppCompatActivity(), OnMapReadyCallback {
     companion object {
