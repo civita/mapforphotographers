@@ -1,6 +1,7 @@
 package com.cs386p.mapforphotographers.ui.home
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.os.Bundle
@@ -9,6 +10,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -32,18 +34,37 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.material.internal.ViewUtils.hideKeyboard
 
 class HomeFragment : Fragment(), OnMapReadyCallback {
     private lateinit var map: GoogleMap
     private lateinit var geocoder: Geocoder
     private var locationPermissionGranted = false
     private val viewModelPhoto: PhotoViewModel by activityViewModels()
+    private val viewModel: HomeViewModel by activityViewModels()
     private var _binding: FragmentHomeBinding? = null
     private var photoList: List<PhotoMeta> = listOf()
     private var zoom: Float = 0.0F
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+
+    // An Android nightmare
+    // https://stackoverflow.com/a/70562398
+    // https://stackoverflow.com/questions/1109022/close-hide-the-android-soft-keyboard
+    // https://stackoverflow.com/questions/7789514/how-to-get-activitys-windowtoken-without-view
+    private fun hideKeyboard() {
+        if (activity != null){
+            // Hide soft keyboard
+            val imm =
+                requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(requireView().windowToken, 0)
+        }
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -63,6 +84,15 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             .findFragmentById(R.id.mapFrag) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(binding.root.context)
+
+        viewModel.position.observe(viewLifecycleOwner) {
+            if (this::map.isInitialized) {
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(it, 15.0f))
+            }
+            binding.mapET.text.clear()
+            binding.mapET.clearFocus()
+        }
 
         viewModelPhoto.observePhotoMeta().observe(viewLifecycleOwner) {
             if (this::map.isInitialized) {
@@ -131,7 +161,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             // might complain about our not checking it.
             val permission = ContextCompat.checkSelfPermission(binding.root.context,
                 Manifest.permission.ACCESS_FINE_LOCATION)
-            Log.d("xxx", permission.toString())
 
             if (permission != PackageManager.PERMISSION_GRANTED) {
                 if (!locationPermissionGranted) {
@@ -174,23 +203,52 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
         }
 
-        val homeViewModel =
-            ViewModelProvider(this)[HomeViewModel::class.java]
-
-
-        homeViewModel.position.observe(viewLifecycleOwner) {
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(it, 15.0f))
-            binding.mapET.text.clear()
-            binding.mapET.clearFocus()
-        }
-
         binding.goBut.setOnClickListener() {
             val address = binding.mapET.text.toString()
-            if (address != "") {
-                homeViewModel.getGeocode(address, geocoder)
+            if (!address.isNullOrBlank()) {
+                viewModel.getGeocode(address, geocoder)
+                hideKeyboard()
+            } else {
+                val snack = Snackbar.make(it,"Please provide an address!",Snackbar.LENGTH_SHORT)
+                snack.show()
             }
         }
 
+        getDeviceLocation()
+    }
+
+    /**
+     * Gets the current location of the device, and positions the map's camera.
+     * https://developers.google.com/maps/documentation/android-sdk/current-place-tutorial
+     */
+    private fun getDeviceLocation() {
+        /*
+         * Get the best and most recent location of the device, which may be null in rare
+         * cases when a location is not available.
+         */
+        try {
+            if (locationPermissionGranted) {
+                val locationResult = fusedLocationProviderClient.lastLocation
+                locationResult.addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        // Set the map's camera position to the current location of the device.
+                        val lastKnownLocation = task.result
+                        if (lastKnownLocation != null) {
+                            map.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                                LatLng(
+                                    lastKnownLocation.latitude,
+                                    lastKnownLocation.longitude), 15.0F))
+                        }
+                    } else {
+                        if (viewModel.position.value != null) {
+                            map.moveCamera(CameraUpdateFactory.newLatLngZoom(viewModel.position.value!!, 15.0F))
+                        }
+                    }
+                }
+            }
+        } catch (e: SecurityException) {
+            Log.e("Exception: %s", e.message, e)
+        }
     }
 
     private fun checkGooglePlayServices() {

@@ -49,10 +49,6 @@ class PhotoMetaAdapter(private val viewModel: PhotoViewModel)
             //val photoMeta = viewModel.getPhotoMeta(position)
             val photoMeta = getItem(position)
             viewModel.glideFetch(photoMeta.uuid, rowBinding.rowImageView)
-//            holder.rowBinding.rowPictureTitle.text = photoMeta.pictureTitle
-//            holder.rowBinding.rowSize.text = photoMeta.byteSize.toString()
-            // Note to future me: It might be fun to display the date]
-            Log.d("xxx_adapter", photoMeta.pictureTitle)
             rowBinding.root.setOnClickListener {
                 doOnePhotoViewing(rowBinding.root.context, photoMeta)
             }

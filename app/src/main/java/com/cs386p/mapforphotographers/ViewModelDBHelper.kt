@@ -13,10 +13,9 @@ class ViewModelDBHelper() {
 
     fun fetchPhotoMeta(uid: String,
                        isViewingLiked: Boolean,
-                       sortInfo: SortInfo,
                        notesList: MutableLiveData<List<PhotoMeta>>
     ) {
-        dbFetchPhotoMeta(uid, isViewingLiked, sortInfo, notesList)
+        dbFetchPhotoMeta(uid, isViewingLiked, notesList)
     }
     // If we want to listen for real time updates use this
     // .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
@@ -45,20 +44,8 @@ class ViewModelDBHelper() {
     // https://firebase.google.com/docs/firestore/query-data/order-limit-data
     private fun dbFetchPhotoMeta(uid: String,
                                  isViewingLiked: Boolean,
-                                 sortInfo: SortInfo,
                                  notesList: MutableLiveData<List<PhotoMeta>>
     ) {
-        // XXX Write me and use limitAndGet
-        //todo sortInfo
-//        val orderByName = when (sortInfo.sortColumn) {
-//            SortColumn.TITLE -> "pictureTitle"
-//            SortColumn.SIZE -> "byteSize"
-//        }
-//        if (sortInfo.ascending) {
-//            limitAndGet(db.collection(rootCollection).orderBy(orderByName, Query.Direction.ASCENDING), notesList)
-//        } else {
-//            limitAndGet(db.collection(rootCollection).orderBy(orderByName, Query.Direction.DESCENDING), notesList)
-//        }
         if(isViewingLiked) {
             limitAndGet(db.collection(rootCollection).whereArrayContains("likedBy", uid), notesList)
         } else {
@@ -124,7 +111,6 @@ class ViewModelDBHelper() {
 
     // https://firebase.google.com/docs/firestore/manage-data/add-data#add_a_document
     fun createPhotoMeta(
-        sortInfo: SortInfo,
         photoMeta: PhotoMeta,
         notesList: MutableLiveData<List<PhotoMeta>>
     ) {
@@ -138,7 +124,7 @@ class ViewModelDBHelper() {
                     javaClass.simpleName,
                     "photoMeta create \"${photoMeta.pictureTitle}\" id: ${photoMeta.firestoreID}"
                 )
-                dbFetchPhotoMeta(photoMeta.ownerUid, false, sortInfo, notesList)
+                dbFetchPhotoMeta(photoMeta.ownerUid, false, notesList)
             }
             .addOnFailureListener { e ->
                 Log.d(javaClass.simpleName, "photoMeta create FAILED \"${photoMeta.pictureTitle}\"")
@@ -148,7 +134,6 @@ class ViewModelDBHelper() {
 
     // https://firebase.google.com/docs/firestore/manage-data/delete-data#delete_documents
     fun removePhotoMeta(
-        sortInfo: SortInfo,
         photoMeta: PhotoMeta,
         photoMetaList: MutableLiveData<List<PhotoMeta>>
     ) {
@@ -161,7 +146,7 @@ class ViewModelDBHelper() {
                     javaClass.simpleName,
                     "photoMeta delete \"${photoMeta.pictureTitle}\" id: ${photoMeta.firestoreID}"
                 )
-                dbFetchPhotoMeta(photoMeta.ownerUid, false, sortInfo, photoMetaList)
+                dbFetchPhotoMeta(photoMeta.ownerUid, false, photoMetaList)
             }
             .addOnFailureListener { e ->
                 Log.d(javaClass.simpleName, "photoMeta deleting FAILED \"${photoMeta.pictureTitle}\"")

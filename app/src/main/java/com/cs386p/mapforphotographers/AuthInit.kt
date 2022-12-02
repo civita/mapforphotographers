@@ -9,7 +9,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 
 
-// copied from fc6
+// From fc6
 // https://firebase.google.com/docs/auth/android/firebaseui
 class AuthInit(viewModel: ProfileViewModel, signInLauncher: ActivityResultLauncher<Intent>) {
     companion object {

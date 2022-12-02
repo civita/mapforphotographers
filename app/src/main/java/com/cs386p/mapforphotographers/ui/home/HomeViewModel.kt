@@ -28,7 +28,6 @@ class HomeViewModel : ViewModel() {
     val position: LiveData<LatLng> = _position
 
     fun getGeocode(address: String, geocoder: Geocoder) {
-        // XXX Write me.  This is where the network request is initiated.
         viewModelScope.launch(
             context = viewModelScope.coroutineContext + Dispatchers.IO
         ) {

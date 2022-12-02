@@ -12,19 +12,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.cs386p.mapforphotographers.AuthInit
 import com.cs386p.mapforphotographers.PhotoViewModel
 import com.cs386p.mapforphotographers.PhotoViewModel.Companion.doOnePhoto
@@ -33,7 +26,6 @@ import com.cs386p.mapforphotographers.view.PhotoMetaAdapter
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import java.io.File
-
 
 class ProfileFragment : Fragment() {
     companion object {
@@ -105,29 +97,17 @@ class ProfileFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val notificationsViewModel =
-            ViewModelProvider(this).get(ProfileViewModel::class.java)
-
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-//        val textView: TextView = binding.textProfile
-//        notificationsViewModel.text.observe(viewLifecycleOwner) {
-//            textView.text = it
-//        }
         val adapter = PhotoMetaAdapter(viewModelPhoto)
         val rv = binding.photosRV
-        //val itemDecor = DividerItemDecoration(rv.context, StaggeredGridLayoutManager.VERTICAL)
-        //rv.addItemDecoration(itemDecor)
         rv.adapter = adapter
         rv.layoutManager = GridLayoutManager(rv.context, 3)
-//        // Swipe left to delete
-//        initTouchHelper().attachToRecyclerView(rv)
         viewModelPhoto.observePhotoMeta().observe(viewLifecycleOwner) {
             adapter.submitList(it)
             updatePhotoCount()
         }
-
 
         binding.buttonLogin.setOnClickListener {
             val user = FirebaseAuth.getInstance().currentUser
@@ -215,21 +195,19 @@ class ProfileFragment : Fragment() {
 
         viewModel.updateUser()
         viewModelPhoto.fetchPhotoMeta()
-//        updatePhotoCount()
         return root
     }
     private val importPhotoLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
-            //result.data?.toString()?.let { Log.d("xxx", it) }
             if (result.data != null && result.data?.data != null) {
                 doOnePhoto(binding.root.context, result.data!!.data!!)
                 viewModelPhoto.updateIsViewingLiked(false)
             }
-            //result.data...
-            //viewModel.pictureSuccess()
         } else {
-            //viewModel.pictureFailure()
+            val snack = Snackbar.make(binding.root,"Error picking up a photo!", Snackbar.LENGTH_SHORT)
+            snack.show()
+            // Do nothing
         }
     }
 

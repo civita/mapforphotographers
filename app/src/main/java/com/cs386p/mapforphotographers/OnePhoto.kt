@@ -43,18 +43,10 @@ import kotlin.math.sqrt
 
 class OnePhoto: AppCompatActivity(), OnMapReadyCallback {
     companion object {
-        const val titleKey = "title"
-        const val selfTextKey = "selfText"
-        const val imageURLKey = "imageURL"
-        const val thumbnailURLKey = "thumbnailURL"
         const val uriKey = "uri"
     }
     private val viewModel: PhotoViewModel by viewModels()
 
-    private var title : String = """"""
-    private var selfText : String = """"""
-    private var imageURL : String = """"""
-    private var thumbnailURL : String = """"""
     private var uri : String = """"""
     private val storage = Storage()
 
@@ -62,8 +54,7 @@ class OnePhoto: AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var map: GoogleMap
     private var locationPermissionGranted = false
-    private val nearHarryRansomCenter = LatLng(30.284422165825934, -97.74120999100127)
-    
+
     private var _binding: ActivityOnePhotoBinding? = null
     private val binding get() = _binding!!
 
@@ -87,8 +78,6 @@ class OnePhoto: AppCompatActivity(), OnMapReadyCallback {
         super.onCreate(savedInstanceState)
         _binding = ActivityOnePhotoBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        //setSupportActionBar(activityOnePostBinding.toolbar)
-        //supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
         supportActionBar?.setHomeButtonEnabled(false)
         supportActionBar?.title = "Upload a photo"
@@ -96,7 +85,7 @@ class OnePhoto: AppCompatActivity(), OnMapReadyCallback {
         uri = intent.getStringExtra(uriKey).toString()
         Log.d("xxx_onephoto", uri)
 
-        //google maps things...
+        // Google maps things...
         checkGooglePlayServices()
         requestPermission()
         val mapFragment = supportFragmentManager
@@ -111,10 +100,6 @@ class OnePhoto: AppCompatActivity(), OnMapReadyCallback {
                     snack.show()
                 } else {
                     if(!binding.onePhotoTitle.text.isNullOrBlank()) {
-                        // todo: check gps is valid or not
-                        //viewModel.pictureSuccess()
-//                    val localPhotoFile = File(Uri.parse(uri).toString())
-
                         val uuid = UUID.randomUUID().toString()
                         photometa.pictureTitle = binding.onePhotoTitle.text.toString()
                         photometa.pictureDescription = binding.onePhotoDescription.text.toString()
@@ -131,9 +116,7 @@ class OnePhoto: AppCompatActivity(), OnMapReadyCallback {
                         snack.show()
                     }
                 }
-
             }
-
             binding.onePhotoImage.setImageURI(Uri.parse(uri))
 
             val sIn: InputStream?
@@ -141,12 +124,9 @@ class OnePhoto: AppCompatActivity(), OnMapReadyCallback {
                 sIn = contentResolver.openInputStream(Uri.parse(uri))
                 val exifInterface = sIn?.let { ExifInterface(it) }
                 if (exifInterface != null) {
-
-                    Log.d("xxx_onephoto", exifInterface.toString())
                     photometa.pictureDate = exifInterface.getAttribute(ExifInterface.TAG_DATETIME_ORIGINAL).toString()
                     if (photometa.pictureDate == "null")
                         photometa.pictureDate = exifInterface.getAttribute(ExifInterface.TAG_DATETIME).toString()
-
                     binding.onePhotoTime.text = photometa.pictureDate
 
                     photometa.pictureCamera = exifInterface.getAttribute(ExifInterface.TAG_MODEL).toString()
@@ -174,11 +154,7 @@ class OnePhoto: AppCompatActivity(), OnMapReadyCallback {
                     //photometa.pictureLng = exifInterface.getAttributeDouble(ExifInterface.TAG_GPS_LONGITUDE, 0.00).toString()
                     photometa.pictureLng = exifInterface.latLong?.last().toString()
                     binding.onePhotoLng.text = photometa.pictureLng
-
-
                 }
-                // Extract the EXIF tag here
-
                 try {
                     sIn?.close()
                 } catch (ignored: IOException) {
@@ -188,34 +164,6 @@ class OnePhoto: AppCompatActivity(), OnMapReadyCallback {
                 // Handle any errors
             }
         }
-//        title = intent.getStringExtra(titleKey).toString()
-//        selfText = intent.getStringExtra(selfTextKey).toString()
-//        imageURL = intent.getStringExtra(imageURLKey).toString()
-//        thumbnailURL = intent.getStringExtra(thumbnailURLKey).toString()
-//        if(title.length > 30) {
-//            title = title.subSequence(0, 30).toString() + "..."
-//        }
-//        Log.d("xxx_onepost", selfText)
-//
-//        supportActionBar?.title = title
-//        activityOnePostBinding.toolbar.title = title
-//        activityOnePostBinding.selfText.text = selfText
-//        activityOnePostBinding.selfText.movementMethod = ScrollingMovementMethod()
-        //Glide.glideFetch(imageURL, thumbnailURL, activityOnePostBinding.selfImage)
-
-//        addMenuProvider(object : MenuProvider {
-//            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-//                // Inflate the menu; this adds items to the action bar if it is present.
-//                menuInflater.inflate(R.menu.menu_main, menu)
-//            }
-//            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-//                // Handle action bar item clicks here.
-//                return when (menuItem.itemId) {
-//                    android.R.id.home -> {finish(); true} // Handle in fragment
-//                    else -> false
-//                }
-//            }
-//        })
     }
 
     override fun onRequestPermissionsResult(
@@ -270,21 +218,13 @@ class OnePhoto: AppCompatActivity(), OnMapReadyCallback {
                     .title(titleString)
             )
 
-
             photometa.pictureLat = it.latitude.toString()
             binding.onePhotoLat.text = photometa.pictureLat
 
             photometa.pictureLng = it.longitude.toString()
             binding.onePhotoLng.text = photometa.pictureLng
         }
-//        map.setOnMapLongClickListener {
-//            map.clear()
-//        }
-        // todo: add marker and move camera
 
-        // Start the map at the Harry Ransom center
-        //map.moveCamera(CameraUpdateFactory.newLatLngZoom(nearHarryRansomCenter, 15.0f))
-        Log.d("xxx_one_photo", photometa.pictureLat)
         if (photometa.pictureLat != "null" && photometa.pictureLng != "null") { // some dirty work to avoid null geotag
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(photometa.pictureLat.toDouble(), photometa.pictureLng.toDouble()), 15.0f))
             val titleString = "%.3f".format(photometa.pictureLat.toDouble()) + " " + "%.3f".format(photometa.pictureLng.toDouble())
@@ -327,6 +267,4 @@ class OnePhoto: AppCompatActivity(), OnMapReadyCallback {
         }
         locationPermissionRequest.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION))
     }
-
-
 }

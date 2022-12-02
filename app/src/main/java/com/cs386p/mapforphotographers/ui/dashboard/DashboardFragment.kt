@@ -8,16 +8,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.cs386p.mapforphotographers.PhotoViewModel
 import com.cs386p.mapforphotographers.databinding.FragmentDashboardBinding
 import com.cs386p.mapforphotographers.view.PhotoMetaAdapter
-import com.google.android.material.internal.ViewUtils.hideKeyboard
 
 class DashboardFragment : Fragment() {
 
@@ -27,7 +24,6 @@ class DashboardFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
     private val viewModelPhoto: PhotoViewModel by activityViewModels()
-
 
     // An Android nightmare
     // https://stackoverflow.com/a/70562398
@@ -47,20 +43,12 @@ class DashboardFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val dashboardViewModel =
-            ViewModelProvider(this).get(DashboardViewModel::class.java)
-
         _binding = FragmentDashboardBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-//        val textView: TextView = binding.textDashboard
-//        dashboardViewModel.text.observe(viewLifecycleOwner) {
-//            textView.text = it
-//        }
         val adapter = PhotoMetaAdapter(viewModelPhoto)
         val rv = binding.dashboardPhotosRV
-        //val itemDecor = DividerItemDecoration(rv.context, StaggeredGridLayoutManager.VERTICAL)
-        //rv.addItemDecoration(itemDecor)
+
         rv.adapter = adapter
         rv.layoutManager = GridLayoutManager(rv.context, 3)
         viewModelPhoto.observeLivePhotoMeta().observe(viewLifecycleOwner) {
@@ -90,7 +78,6 @@ class DashboardFragment : Fragment() {
         viewModelPhoto.searchTermRefresh()
         super.onResume()
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()
