@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import com.cs386p.mapforphotographers.MainActivity
 import com.cs386p.mapforphotographers.PhotoViewModel
 import com.cs386p.mapforphotographers.PhotoViewModel.Companion.doOnePhotoViewing
 import com.cs386p.mapforphotographers.R
@@ -49,8 +50,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val homeViewModel =
-            ViewModelProvider(this).get(HomeViewModel::class.java)
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
@@ -90,10 +89,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 }
             }
         }
-//        val textView: TextView = binding.textHome
-//        homeViewModel.text.observe(viewLifecycleOwner) {
-//            textView.text = it
-//        }
+
         return root
     }
 
@@ -178,14 +174,22 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
         }
 
-        // Start the map at the Harry Ransom center
-        //map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(map.myLocation.latitude, map.myLocation.longitude), 15.0f))
-//        val titleString = "%.3f".format(photometa.pictureLat.toDouble()) + " " + "%.3f".format(photometa.pictureLng.toDouble())
-//        map.addMarker(
-//            MarkerOptions()
-//                .position(LatLng(photometa.pictureLat.toDouble(), photometa.pictureLng.toDouble()))
-//                .title(titleString)
-//        )
+        val homeViewModel =
+            ViewModelProvider(this)[HomeViewModel::class.java]
+
+
+        homeViewModel.position.observe(viewLifecycleOwner) {
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(it, 15.0f))
+            binding.mapET.text.clear()
+            binding.mapET.clearFocus()
+        }
+
+        binding.goBut.setOnClickListener() {
+            val address = binding.mapET.text.toString()
+            if (address != "") {
+                homeViewModel.getGeocode(address, geocoder)
+            }
+        }
 
     }
 
