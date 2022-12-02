@@ -53,6 +53,7 @@ class DashboardFragment : Fragment() {
         rv.layoutManager = GridLayoutManager(rv.context, 3)
         viewModelPhoto.observeLivePhotoMeta().observe(viewLifecycleOwner) {
             adapter.submitList(it)
+            binding.swipeRefreshLayout.isRefreshing = false
         }
         binding.actionSearch.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {}
@@ -71,6 +72,9 @@ class DashboardFragment : Fragment() {
             }
         })
         viewModelPhoto.searchTermRefresh()
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            viewModelPhoto.fetchPublicPhotoMeta()
+        }
         return root
     }
 

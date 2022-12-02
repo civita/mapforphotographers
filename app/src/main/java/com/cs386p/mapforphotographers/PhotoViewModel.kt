@@ -31,7 +31,6 @@ class PhotoViewModel() : ViewModel() {
     private var firebaseAuthLiveData = FirestoreAuthLiveData()
     // Database access
     private val dbHelp = ViewModelDBHelper()
-
     private var photoCount = MutableLiveData<Int>()
     private var photoLikedCount = MutableLiveData<Int>()
     private var isViewingLiked = MutableLiveData<Boolean>().apply {
