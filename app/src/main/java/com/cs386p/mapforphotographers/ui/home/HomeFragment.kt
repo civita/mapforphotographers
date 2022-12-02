@@ -43,7 +43,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     private lateinit var geocoder: Geocoder
     private var locationPermissionGranted = false
     private val viewModelPhoto: PhotoViewModel by activityViewModels()
-    private val viewModel: HomeViewModel by activityViewModels()
     private var _binding: FragmentHomeBinding? = null
     private var photoList: List<PhotoMeta> = listOf()
     private var zoom: Float = 0.0F
@@ -51,6 +50,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     // onDestroyView.
     private val binding get() = _binding!!
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    private var deviceLocationGot: Boolean = false
 
     // An Android nightmare
     // https://stackoverflow.com/a/70562398
@@ -71,7 +71,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
@@ -85,14 +84,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         mapFragment.getMapAsync(this)
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(binding.root.context)
-
-        viewModel.position.observe(viewLifecycleOwner) {
-            if (this::map.isInitialized) {
-                map.moveCamera(CameraUpdateFactory.newLatLngZoom(it, 15.0f))
-            }
-            binding.mapET.text.clear()
-            binding.mapET.clearFocus()
-        }
 
         viewModelPhoto.observePhotoMeta().observe(viewLifecycleOwner) {
             if (this::map.isInitialized) {
@@ -119,7 +110,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 }
             }
         }
-
         return root
     }
 
@@ -132,7 +122,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         viewModelPhoto.fetchPublicPhotoMeta()
         super.onResume()
     }
-
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -155,8 +144,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
         Log.d("xxx", locationPermissionGranted.toString())
-        if( locationPermissionGranted ) {
-            // XXX Write me.
+        if(locationPermissionGranted) {
             // Note, we checked location permissions in requestPermission, but the compiler
             // might complain about our not checking it.
             val permission = ContextCompat.checkSelfPermission(binding.root.context,
@@ -203,17 +191,24 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
         }
 
-        binding.goBut.setOnClickListener() {
-            val address = binding.mapET.text.toString()
-            if (!address.isNullOrBlank()) {
-                viewModel.getGeocode(address, geocoder)
+        binding.goBut.setOnClickListener {
+            if(!binding.mapET.text.isNullOrBlank()) {
+                MainScope().launch(Dispatchers.Default) {
+                    val address = geocoder.getFromLocationName(binding.mapET.text.toString(), 1)
+                    withContext(Dispatchers.Main) {
+                        if(address.size > 0 && address.first() != null) {
+                            map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(address.first().latitude, address.first().longitude), 15.0f))
+                        }
+                    }
+                }
+                binding.mapET.text.clear()
+                binding.mapET.clearFocus()
                 hideKeyboard()
             } else {
-                val snack = Snackbar.make(it,"Please provide an address!",Snackbar.LENGTH_SHORT)
+                val snack = Snackbar.make(it, "Please provide an address!", Snackbar.LENGTH_SHORT)
                 snack.show()
             }
         }
-
         getDeviceLocation()
     }
 
@@ -226,29 +221,31 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
          * Get the best and most recent location of the device, which may be null in rare
          * cases when a location is not available.
          */
-        try {
-            if (locationPermissionGranted) {
-                val locationResult = fusedLocationProviderClient.lastLocation
-                locationResult.addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        // Set the map's camera position to the current location of the device.
-                        val lastKnownLocation = task.result
+        if (!deviceLocationGot) {
+            try {
+                if (locationPermissionGranted) {
+                    fusedLocationProviderClient.lastLocation.addOnSuccessListener { lastKnownLocation ->
                         if (lastKnownLocation != null) {
                             map.moveCamera(CameraUpdateFactory.newLatLngZoom(
                                 LatLng(
                                     lastKnownLocation.latitude,
                                     lastKnownLocation.longitude), 15.0F))
-                        }
-                    } else {
-                        if (viewModel.position.value != null) {
-                            map.moveCamera(CameraUpdateFactory.newLatLngZoom(viewModel.position.value!!, 15.0F))
+                            deviceLocationGot = true
+                        } else {
+                            map.moveCamera(
+                                    CameraUpdateFactory.newLatLngZoom(
+                                        LatLng(30.28400, -97.743083),
+                                        15.0F
+                                    )
+                                )
                         }
                     }
                 }
+            } catch (e: SecurityException) {
+                Log.e("Exception: %s", e.message, e)
             }
-        } catch (e: SecurityException) {
-            Log.e("Exception: %s", e.message, e)
         }
+
     }
 
     private fun checkGooglePlayServices() {
